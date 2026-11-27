@@ -1,0 +1,519 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Global Hardened Primitives
+    // -------------------------------------------------------------------------
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isVerified() && (
+        request.auth.token.email == 'g03608160@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isBoundedString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isBoundedStringList(arr, maxItems, maxItemLen) {
+      return arr is list && arr.size() <= maxItems && (
+        arr.size() == 0 || (arr[0] is string && arr[0].size() <= maxItemLen)
+      );
+    }
+
+    // -------------------------------------------------------------------------
+    // Validation Blueprints
+    // -------------------------------------------------------------------------
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'role', 'accountStatus', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'displayName', 'photoURL', 'role', 'accountStatus', 'createdAt', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        isBoundedString(data.displayName, 1, 100) &&
+        (!('photoURL' in data) || isBoundedString(data.photoURL, 0, 500)) &&
+        data.role in ['customer', 'admin'] &&
+        data.accountStatus in ['active', 'suspended'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidUserPrivateInfo(data) {
+      return data.keys().hasAll(['uid', 'email', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'phone', 'preferredStyle', 'bio', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        isBoundedString(data.email, 3, 160) &&
+        (!('phone' in data) || isBoundedString(data.phone, 0, 32)) &&
+        (!('preferredStyle' in data) || isBoundedString(data.preferredStyle, 0, 120)) &&
+        (!('bio' in data) || isBoundedString(data.bio, 0, 500)) &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidService(data) {
+      return data.keys().hasAll(['id', 'slug', 'title', 'category', 'description', 'priceDisplay', 'pricingType', 'inclusions', 'useCases', 'displayOrder', 'active', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'slug', 'title', 'category', 'description', 'priceDisplay', 'priceMin', 'priceMax', 'pricingType', 'promoText', 'inclusions', 'useCases', 'imageUrl', 'displayOrder', 'active', 'createdAt', 'updatedAt']) &&
+        isValidId(data.id) &&
+        isBoundedString(data.slug, 1, 128) &&
+        isBoundedString(data.title, 2, 140) &&
+        data.category in ['Photo Editing', 'Video Editing', 'Mobile Editing', 'PC Editing', 'Social Media', 'Wedding', 'Festival', 'Logo', 'Custom Projects'] &&
+        isBoundedString(data.description, 10, 1500) &&
+        isBoundedString(data.priceDisplay, 1, 100) &&
+        (!('priceMin' in data) || data.priceMin is number) &&
+        (!('priceMax' in data) || data.priceMax is number) &&
+        data.pricingType in ['range', 'fixed', 'starting', 'custom'] &&
+        (!('promoText' in data) || isBoundedString(data.promoText, 0, 200)) &&
+        isBoundedStringList(data.inclusions, 20, 140) &&
+        isBoundedStringList(data.useCases, 12, 120) &&
+        (!('imageUrl' in data) || isBoundedString(data.imageUrl, 0, 500)) &&
+        data.displayOrder is number &&
+        data.active is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['id', 'projectCode', 'customerId', 'customerName', 'customerEmail', 'serviceId', 'serviceTitle', 'category', 'title', 'description', 'status', 'revisionCount', 'fileCount', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'projectCode', 'customerId', 'customerName', 'customerEmail', 'serviceId', 'serviceTitle', 'category', 'title', 'description', 'requirements', 'preferredStyle', 'deliveryFormat', 'referenceLinks', 'attachmentUrls', 'fileCount', 'notes', 'contactPhone', 'priceEstimate', 'status', 'revisionCount', 'latestUpdate', 'internalNotes', 'createdAt', 'updatedAt', 'completedAt']) &&
+        isValidId(data.id) &&
+        isBoundedString(data.projectCode, 4, 32) &&
+        isValidId(data.customerId) &&
+        isBoundedString(data.customerName, 1, 100) &&
+        isBoundedString(data.customerEmail, 3, 160) &&
+        isBoundedString(data.serviceId, 1, 128) &&
+        isBoundedString(data.serviceTitle, 2, 140) &&
+        isBoundedString(data.category, 2, 80) &&
+        isBoundedString(data.title, 3, 160) &&
+        isBoundedString(data.description, 10, 3000) &&
+        (!('requirements' in data) || isBoundedString(data.requirements, 0, 2000)) &&
+        (!('preferredStyle' in data) || isBoundedString(data.preferredStyle, 0, 200)) &&
+        (!('deliveryFormat' in data) || isBoundedString(data.deliveryFormat, 0, 120)) &&
+        (!('referenceLinks' in data) || isBoundedStringList(data.referenceLinks, 5, 400)) &&
+        (!('attachmentUrls' in data) || isBoundedStringList(data.attachmentUrls, 10, 500)) &&
+        data.fileCount is number && data.fileCount >= 0 && data.fileCount <= 20 &&
+        (!('notes' in data) || isBoundedString(data.notes, 0, 1500)) &&
+        (!('contactPhone' in data) || isBoundedString(data.contactPhone, 0, 32)) &&
+        (!('priceEstimate' in data) || isBoundedString(data.priceEstimate, 0, 100)) &&
+        data.status in [
+          'Request Submitted', 'Reviewing', 'Accepted', 'Editing in Progress',
+          'Ready for Review', 'Waiting for Customer Information',
+          'Revision Requested', 'Completed', 'Rejected', 'Cancelled'
+        ] &&
+        data.revisionCount is number && data.revisionCount >= 0 && data.revisionCount <= 50 &&
+        (!('latestUpdate' in data) || isBoundedString(data.latestUpdate, 0, 500)) &&
+        (!('internalNotes' in data) || isBoundedString(data.internalNotes, 0, 1500)) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        (!('completedAt' in data) || isBoundedString(data.completedAt, 0, 64));
+    }
+
+    function isValidProjectHistory(data) {
+      return data.keys().hasAll(['id', 'actorId', 'actorRole', 'toStatus', 'note', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'actorId', 'actorRole', 'fromStatus', 'toStatus', 'note', 'createdAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.actorId) &&
+        data.actorRole in ['customer', 'admin'] &&
+        (!('fromStatus' in data) || isBoundedString(data.fromStatus, 0, 64)) &&
+        isBoundedString(data.toStatus, 2, 64) &&
+        isBoundedString(data.note, 0, 600) &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidProjectMessage(data) {
+      return data.keys().hasAll(['id', 'senderId', 'senderName', 'senderRole', 'body', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'senderId', 'senderName', 'senderRole', 'body', 'createdAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.senderId) &&
+        isBoundedString(data.senderName, 1, 100) &&
+        data.senderRole in ['customer', 'admin'] &&
+        isBoundedString(data.body, 1, 2000) &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidReview(data) {
+      return data.keys().hasAll(['id', 'customerId', 'displayName', 'projectId', 'category', 'rating', 'reviewText', 'photoUrls', 'moderationStatus', 'featured', 'adminReply', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'customerId', 'displayName', 'projectId', 'category', 'rating', 'reviewText', 'photoUrls', 'moderationStatus', 'featured', 'adminReply', 'adminReplyAt', 'createdAt', 'updatedAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.customerId) &&
+        isBoundedString(data.displayName, 1, 80) &&
+        isValidId(data.projectId) &&
+        isBoundedString(data.category, 2, 80) &&
+        data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+        isBoundedString(data.reviewText, 10, 1500) &&
+        isBoundedStringList(data.photoUrls, 5, 500) &&
+        data.moderationStatus in ['pending', 'approved', 'rejected', 'hidden'] &&
+        data.featured is bool &&
+        isBoundedString(data.adminReply, 0, 1000) &&
+        (!('adminReplyAt' in data) || isBoundedString(data.adminReplyAt, 0, 64)) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidPortfolioItem(data) {
+      return data.keys().hasAll(['id', 'title', 'description', 'category', 'mediaType', 'mediaUrl', 'featured', 'displayOrder', 'active', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'title', 'description', 'category', 'mediaType', 'mediaUrl', 'thumbnailUrl', 'featured', 'displayOrder', 'active', 'createdAt', 'updatedAt']) &&
+        isValidId(data.id) &&
+        isBoundedString(data.title, 2, 140) &&
+        isBoundedString(data.description, 5, 1000) &&
+        isBoundedString(data.category, 2, 80) &&
+        data.mediaType in ['image', 'video'] &&
+        isBoundedString(data.mediaUrl, 1, 500) &&
+        (!('thumbnailUrl' in data) || isBoundedString(data.thumbnailUrl, 0, 500)) &&
+        data.featured is bool &&
+        data.displayOrder is number &&
+        data.active is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'recipientId', 'type', 'title', 'message', 'read', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'recipientId', 'type', 'title', 'message', 'projectId', 'read', 'createdAt']) &&
+        isValidId(data.id) &&
+        isBoundedString(data.recipientId, 1, 128) &&
+        isBoundedString(data.type, 2, 64) &&
+        isBoundedString(data.title, 2, 140) &&
+        isBoundedString(data.message, 2, 500) &&
+        (!('projectId' in data) || isBoundedString(data.projectId, 0, 128)) &&
+        data.read is bool &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidContact(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'category', 'message', 'status', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'name', 'email', 'phone', 'category', 'message', 'status', 'createdAt']) &&
+        isValidId(data.id) &&
+        isBoundedString(data.name, 2, 100) &&
+        isBoundedString(data.email, 3, 160) &&
+        (!('phone' in data) || isBoundedString(data.phone, 0, 32)) &&
+        isBoundedString(data.category, 2, 80) &&
+        isBoundedString(data.message, 10, 2000) &&
+        data.status in ['new', 'read', 'replied'] &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidBanner(data) {
+      return data.keys().hasAll(['id', 'title', 'displayOrder', 'active', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'title', 'subtitle', 'ctaLabel', 'ctaLink', 'imageUrl', 'displayOrder', 'active', 'updatedAt']) &&
+        isValidId(data.id) &&
+        isBoundedString(data.title, 2, 120) &&
+        (!('subtitle' in data) || isBoundedString(data.subtitle, 0, 260)) &&
+        (!('ctaLabel' in data) || isBoundedString(data.ctaLabel, 0, 40)) &&
+        (!('ctaLink' in data) || isBoundedString(data.ctaLink, 0, 200)) &&
+        (!('imageUrl' in data) || isBoundedString(data.imageUrl, 0, 500)) &&
+        data.displayOrder is number &&
+        data.active is bool &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidSiteSettings(data) {
+      return data.keys().hasAll(['id', 'tagline', 'heroDescription', 'aboutIntro', 'updatedAt']) &&
+        data.keys().hasOnly([
+          'id', 'tagline', 'heroDescription', 'aboutIntro', 'aboutEditing', 'aboutApproach',
+          'aboutServices', 'aboutWorkflow', 'aboutCommitment', 'contactEmail', 'contactPhone',
+          'whatsappLink', 'instagramLink', 'youtubeLink', 'contactText', 'footerText', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isBoundedString(data.tagline, 2, 140) &&
+        isBoundedString(data.heroDescription, 10, 800) &&
+        isBoundedString(data.aboutIntro, 10, 1200) &&
+        (!('aboutEditing' in data) || isBoundedString(data.aboutEditing, 0, 1000)) &&
+        (!('aboutApproach' in data) || isBoundedString(data.aboutApproach, 0, 1000)) &&
+        (!('aboutServices' in data) || isBoundedString(data.aboutServices, 0, 1000)) &&
+        (!('aboutWorkflow' in data) || isBoundedString(data.aboutWorkflow, 0, 1000)) &&
+        (!('aboutCommitment' in data) || isBoundedString(data.aboutCommitment, 0, 1000)) &&
+        (!('contactEmail' in data) || isBoundedString(data.contactEmail, 0, 160)) &&
+        (!('contactPhone' in data) || isBoundedString(data.contactPhone, 0, 40)) &&
+        (!('whatsappLink' in data) || isBoundedString(data.whatsappLink, 0, 300)) &&
+        (!('instagramLink' in data) || isBoundedString(data.instagramLink, 0, 300)) &&
+        (!('youtubeLink' in data) || isBoundedString(data.youtubeLink, 0, 300)) &&
+        (!('contactText' in data) || isBoundedString(data.contactText, 0, 500)) &&
+        (!('footerText' in data) || isBoundedString(data.footerText, 0, 300)) &&
+        data.updatedAt is timestamp;
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection Match Rules
+    // -------------------------------------------------------------------------
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
+      allow list, write: if false;
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isValidId(userId) && isVerified() && isOwner(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().uid == userId &&
+        incoming().role == 'customer' &&
+        incoming().accountStatus == 'active' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(userId) && isSignedIn() && isValidUserProfile(incoming()) && (
+        isAdmin() ||
+        (isOwner(userId) && isVerified() &&
+          incoming().uid == existing().uid &&
+          incoming().role == existing().role &&
+          incoming().accountStatus == existing().accountStatus &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt']))
+      );
+      allow delete: if false;
+
+      match /private/{docId} {
+        allow get: if isValidId(userId) && isValidId(docId) && (isOwner(userId) || isAdmin());
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isValidId(userId) && isValidId(docId) && isVerified() && (isOwner(userId) || isAdmin()) &&
+          isValidUserPrivateInfo(incoming()) &&
+          incoming().uid == userId &&
+          incoming().updatedAt == request.time;
+        allow update: if isValidId(userId) && isValidId(docId) && isVerified() && (isOwner(userId) || isAdmin()) &&
+          isValidUserPrivateInfo(incoming()) &&
+          incoming().uid == existing().uid &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['email', 'phone', 'preferredStyle', 'bio', 'updatedAt']);
+        allow delete: if false;
+      }
+    }
+
+    match /services/{serviceId} {
+      allow get: if isValidId(serviceId);
+      allow list: if true;
+      allow create: if isValidId(serviceId) && isAdmin() && isValidService(incoming()) &&
+        incoming().id == serviceId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(serviceId) && isAdmin() && isValidService(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(serviceId) && isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow get: if isValidId(projectId) && isSignedIn() && (
+        resource.data.customerId == request.auth.uid || isAdmin()
+      );
+      allow list: if isSignedIn() && (
+        resource.data.customerId == request.auth.uid || isAdmin()
+      );
+      allow create: if isValidId(projectId) && isVerified() && isValidProject(incoming()) &&
+        incoming().id == projectId &&
+        incoming().customerId == request.auth.uid &&
+        incoming().status == 'Request Submitted' &&
+        incoming().revisionCount == 0 &&
+        (!('internalNotes' in incoming()) || incoming().internalNotes == '') &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(projectId) && isVerified() && isValidProject(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().customerId == existing().customerId &&
+        incoming().projectCode == existing().projectCode &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() ||
+          (
+            existing().customerId == request.auth.uid &&
+            !(existing().status in ['Completed', 'Rejected', 'Cancelled']) && (
+              // Action 1: Cancel early request
+              (
+                existing().status in ['Request Submitted', 'Reviewing', 'Waiting for Customer Information'] &&
+                incoming().status == 'Cancelled' &&
+                incoming().diff(existing()).affectedKeys().hasOnly(['status', 'latestUpdate', 'updatedAt'])
+              ) ||
+              // Action 2: Request revision when Ready for Review
+              (
+                existing().status == 'Ready for Review' &&
+                incoming().status == 'Revision Requested' &&
+                incoming().revisionCount == existing().revisionCount + 1 &&
+                incoming().diff(existing()).affectedKeys().hasOnly(['status', 'revisionCount', 'latestUpdate', 'updatedAt'])
+              ) ||
+              // Action 3: Customer adds notes/files when waiting for info
+              (
+                existing().status in ['Request Submitted', 'Waiting for Customer Information'] &&
+                incoming().status == existing().status &&
+                incoming().diff(existing()).affectedKeys().hasOnly(['notes', 'attachmentUrls', 'fileCount', 'referenceLinks', 'updatedAt'])
+              )
+            )
+          )
+        );
+      allow delete: if isValidId(projectId) && isAdmin();
+
+      match /history/{historyId} {
+        allow get: if isValidId(projectId) && isValidId(historyId) && isSignedIn() && (
+          get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == request.auth.uid || isAdmin()
+        );
+        allow list: if isSignedIn() && (
+          get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == request.auth.uid || isAdmin()
+        );
+        allow create: if isValidId(projectId) && isValidId(historyId) && isVerified() && isValidProjectHistory(incoming()) &&
+          incoming().id == historyId &&
+          incoming().actorId == request.auth.uid &&
+          incoming().createdAt == request.time && (
+            (isAdmin() && incoming().actorRole == 'admin') ||
+            (
+              incoming().actorRole == 'customer' &&
+              get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == request.auth.uid
+            )
+          );
+        allow update, delete: if false;
+      }
+
+      match /messages/{messageId} {
+        allow get: if isValidId(projectId) && isValidId(messageId) && isSignedIn() && (
+          get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == request.auth.uid || isAdmin()
+        );
+        allow list: if isSignedIn() && (
+          get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == request.auth.uid || isAdmin()
+        );
+        allow create: if isValidId(projectId) && isValidId(messageId) && isVerified() && isValidProjectMessage(incoming()) &&
+          incoming().id == messageId &&
+          incoming().senderId == request.auth.uid &&
+          incoming().createdAt == request.time && (
+            (isAdmin() && incoming().senderRole == 'admin') ||
+            (
+              incoming().senderRole == 'customer' &&
+              get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == request.auth.uid
+            )
+          );
+        allow update, delete: if false;
+      }
+    }
+
+    match /reviews/{reviewId} {
+      allow get: if isValidId(reviewId) && (
+        resource.data.moderationStatus == 'approved' ||
+        (isSignedIn() && resource.data.customerId == request.auth.uid) ||
+        isAdmin()
+      );
+      allow list: if resource.data.moderationStatus == 'approved' ||
+        (isSignedIn() && resource.data.customerId == request.auth.uid) ||
+        isAdmin();
+      allow create: if isValidId(reviewId) && isVerified() && isValidReview(incoming()) &&
+        incoming().id == reviewId &&
+        incoming().customerId == request.auth.uid &&
+        incoming().moderationStatus == 'pending' &&
+        incoming().featured == false &&
+        incoming().adminReply == '' &&
+        exists(/databases/$(database)/documents/projects/$(incoming().projectId)) &&
+        get(/databases/$(database)/documents/projects/$(incoming().projectId)).data.customerId == request.auth.uid &&
+        get(/databases/$(database)/documents/projects/$(incoming().projectId)).data.status == 'Completed' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(reviewId) && isAdmin() && isValidReview(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().customerId == existing().customerId &&
+        incoming().projectId == existing().projectId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(reviewId) && isAdmin();
+    }
+
+    match /portfolio/{itemId} {
+      allow get: if isValidId(itemId) && (resource.data.active == true || isAdmin());
+      allow list: if resource.data.active == true || isAdmin();
+      allow create: if isValidId(itemId) && isAdmin() && isValidPortfolioItem(incoming()) &&
+        incoming().id == itemId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(itemId) && isAdmin() && isValidPortfolioItem(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(itemId) && isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow get: if isValidId(notificationId) && isSignedIn() && (
+        resource.data.recipientId == request.auth.uid ||
+        (isAdmin() && resource.data.recipientId == 'admin')
+      );
+      allow list: if isSignedIn() && (
+        resource.data.recipientId == request.auth.uid ||
+        (isAdmin() && resource.data.recipientId == 'admin')
+      );
+      allow create: if isValidId(notificationId) && isVerified() && isValidNotification(incoming()) &&
+        incoming().id == notificationId &&
+        incoming().read == false &&
+        incoming().createdAt == request.time && (
+          isAdmin() ||
+          incoming().recipientId == 'admin' ||
+          incoming().recipientId == request.auth.uid
+        );
+      allow update: if isValidId(notificationId) && isVerified() && isValidNotification(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().recipientId == existing().recipientId &&
+        incoming().type == existing().type &&
+        incoming().title == existing().title &&
+        incoming().message == existing().message &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['read']) && (
+          existing().recipientId == request.auth.uid ||
+          (isAdmin() && existing().recipientId == 'admin')
+        );
+      allow delete: if isValidId(notificationId) && isAdmin();
+    }
+
+    match /contacts/{contactId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(contactId) && isValidContact(incoming()) &&
+        incoming().id == contactId &&
+        incoming().status == 'new' &&
+        incoming().createdAt == request.time;
+      allow update: if isValidId(contactId) && isAdmin() && isValidContact(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt;
+      allow delete: if isValidId(contactId) && isAdmin();
+    }
+
+    match /banners/{bannerId} {
+      allow get: if isValidId(bannerId) && (resource.data.active == true || isAdmin());
+      allow list: if resource.data.active == true || isAdmin();
+      allow create: if isValidId(bannerId) && isAdmin() && isValidBanner(incoming()) &&
+        incoming().id == bannerId &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(bannerId) && isAdmin() && isValidBanner(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(bannerId) && isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId);
+      allow list: if true;
+      allow create, update: if isValidId(settingId) && isAdmin() && isValidSiteSettings(incoming()) &&
+        incoming().id == settingId &&
+        incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+  }
+}

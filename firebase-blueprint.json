@@ -1,0 +1,304 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Publicly scoped customer account record without sensitive contact PII.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "role": { "type": "string", "enum": ["customer", "admin"] },
+        "accountStatus": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "role", "accountStatus", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Private customer PII isolated under user subcollection.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "preferredStyle": { "type": "string", "maxLength": 120 },
+        "bio": { "type": "string", "maxLength": 500 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "updatedAt"]
+    },
+    "EditingService": {
+      "title": "EditingService",
+      "description": "Dynamic studio editing service and pricing catalog entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "category": {
+          "type": "string",
+          "enum": ["Photo Editing", "Video Editing", "Mobile Editing", "PC Editing", "Social Media", "Wedding", "Festival", "Logo", "Custom Projects"]
+        },
+        "description": { "type": "string", "minLength": 10, "maxLength": 1500 },
+        "priceDisplay": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "priceMin": { "type": "number" },
+        "priceMax": { "type": "number" },
+        "pricingType": { "type": "string", "enum": ["range", "fixed", "starting", "custom"] },
+        "promoText": { "type": "string", "maxLength": 200 },
+        "inclusions": { "type": "array" },
+        "useCases": { "type": "array" },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "displayOrder": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "slug", "title", "category", "description", "priceDisplay", "pricingType", "inclusions", "useCases", "displayOrder", "active", "createdAt", "updatedAt"]
+    },
+    "EditingProject": {
+      "title": "EditingProject",
+      "description": "Customer editing request with backend-governed status lifecycle.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectCode": { "type": "string", "minLength": 4, "maxLength": 32 },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "customerEmail": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "serviceId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "serviceTitle": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "description": { "type": "string", "minLength": 10, "maxLength": 3000 },
+        "requirements": { "type": "string", "maxLength": 2000 },
+        "preferredStyle": { "type": "string", "maxLength": 200 },
+        "deliveryFormat": { "type": "string", "maxLength": 120 },
+        "referenceLinks": { "type": "array" },
+        "attachmentUrls": { "type": "array" },
+        "fileCount": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 1500 },
+        "contactPhone": { "type": "string", "maxLength": 32 },
+        "priceEstimate": { "type": "string", "maxLength": 100 },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Request Submitted",
+            "Reviewing",
+            "Accepted",
+            "Editing in Progress",
+            "Ready for Review",
+            "Waiting for Customer Information",
+            "Revision Requested",
+            "Completed",
+            "Rejected",
+            "Cancelled"
+          ]
+        },
+        "revisionCount": { "type": "number" },
+        "latestUpdate": { "type": "string", "maxLength": 500 },
+        "internalNotes": { "type": "string", "maxLength": 1500 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "projectCode", "customerId", "customerName", "customerEmail", "serviceId", "serviceTitle", "category", "title", "description", "status", "revisionCount", "fileCount", "createdAt", "updatedAt"]
+    },
+    "ProjectHistoryEntry": {
+      "title": "ProjectHistoryEntry",
+      "description": "Immutable timeline entry tracking project status transitions and updates.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actorId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "actorRole": { "type": "string", "enum": ["customer", "admin"] },
+        "fromStatus": { "type": "string", "maxLength": 64 },
+        "toStatus": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "note": { "type": "string", "maxLength": 600 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorId", "actorRole", "toStatus", "note", "createdAt"]
+    },
+    "ProjectMessage": {
+      "title": "ProjectMessage",
+      "description": "Communication message attached to a specific editing project.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "senderId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "senderName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "senderRole": { "type": "string", "enum": ["customer", "admin"] },
+        "body": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "senderId", "senderName", "senderRole", "body", "createdAt"]
+    },
+    "CustomerReview": {
+      "title": "CustomerReview",
+      "description": "Moderated customer review linked to a completed project with optional photo uploads and admin reply.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "projectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "rating": { "type": "number" },
+        "reviewText": { "type": "string", "minLength": 10, "maxLength": 1500 },
+        "photoUrls": { "type": "array" },
+        "moderationStatus": { "type": "string", "enum": ["pending", "approved", "rejected", "hidden"] },
+        "featured": { "type": "boolean" },
+        "adminReply": { "type": "string", "maxLength": 1000 },
+        "adminReplyAt": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "customerId", "displayName", "projectId", "category", "rating", "reviewText", "photoUrls", "moderationStatus", "featured", "adminReply", "createdAt", "updatedAt"]
+    },
+    "PortfolioItem": {
+      "title": "PortfolioItem",
+      "description": "Studio portfolio gallery showcase piece.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "description": { "type": "string", "minLength": 5, "maxLength": 1000 },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "mediaType": { "type": "string", "enum": ["image", "video"] },
+        "mediaUrl": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "thumbnailUrl": { "type": "string", "maxLength": 500 },
+        "featured": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "description", "category", "mediaType", "mediaUrl", "featured", "displayOrder", "active", "createdAt", "updatedAt"]
+    },
+    "StudioNotification": {
+      "title": "StudioNotification",
+      "description": "Private notification record for customer or admin.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "recipientId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "type": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "message": { "type": "string", "minLength": 2, "maxLength": 500 },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "recipientId", "type", "title", "message", "read", "createdAt"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Public contact inquiry stored for admin review.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "email": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "message": { "type": "string", "minLength": 10, "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["new", "read", "replied"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "email", "category", "message", "status", "createdAt"]
+    },
+    "PromoBanner": {
+      "title": "PromoBanner",
+      "description": "Promotional banner managed by studio admin.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "subtitle": { "type": "string", "maxLength": 260 },
+        "ctaLabel": { "type": "string", "maxLength": 40 },
+        "ctaLink": { "type": "string", "maxLength": 200 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "displayOrder": { "type": "number" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "displayOrder", "active", "updatedAt"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Editable website content (About, Hero, Contact info, Footer).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "tagline": { "type": "string", "maxLength": 140 },
+        "heroDescription": { "type": "string", "maxLength": 800 },
+        "aboutIntro": { "type": "string", "maxLength": 1200 },
+        "aboutEditing": { "type": "string", "maxLength": 1000 },
+        "aboutApproach": { "type": "string", "maxLength": 1000 },
+        "aboutServices": { "type": "string", "maxLength": 1000 },
+        "aboutWorkflow": { "type": "string", "maxLength": 1000 },
+        "aboutCommitment": { "type": "string", "maxLength": 1000 },
+        "contactEmail": { "type": "string", "maxLength": 160 },
+        "contactPhone": { "type": "string", "maxLength": 40 },
+        "whatsappLink": { "type": "string", "maxLength": 300 },
+        "instagramLink": { "type": "string", "maxLength": 300 },
+        "youtubeLink": { "type": "string", "maxLength": 300 },
+        "contactText": { "type": "string", "maxLength": 500 },
+        "footerText": { "type": "string", "maxLength": 300 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tagline", "heroDescription", "aboutIntro", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Customer public account metadata without PII."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Owner-only PII document for email, phone, and preferences."
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/EditingService" },
+      "description": "Publicly readable editing services and pricing managed by admin."
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/EditingProject" },
+      "description": "Private customer editing requests governed by strict workflow state machine."
+    },
+    "/projects/{projectId}/history/{historyId}": {
+      "schema": { "$ref": "#/entities/ProjectHistoryEntry" },
+      "description": "Immutable status transition timeline per project."
+    },
+    "/projects/{projectId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ProjectMessage" },
+      "description": "Project communication messages between customer and admin."
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/CustomerReview" },
+      "description": "Customer reviews for completed projects; only approved reviews are public."
+    },
+    "/portfolio/{itemId}": {
+      "schema": { "$ref": "#/entities/PortfolioItem" },
+      "description": "Curated creative portfolio items managed by admin."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/StudioNotification" },
+      "description": "Private notifications for customers and studio admin."
+    },
+    "/contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/ContactMessage" },
+      "description": "Contact form inquiries readable only by admin."
+    },
+    "/banners/{bannerId}": {
+      "schema": { "$ref": "#/entities/PromoBanner" },
+      "description": "Promotional banners managed by admin."
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Dynamic studio copy, About subsections, and contact configuration."
+    }
+  }
+}

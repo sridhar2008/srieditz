@@ -1,0 +1,6 @@
+{
+  "name": "SRI EDITING STUDIO",
+  "description": "Turning Moments Into Visual Stories — Full-stack photo & video editing studio platform with cinematic portfolio, project workflow tracking, client reviews, and studio administration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

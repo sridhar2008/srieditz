@@ -1,0 +1,2292 @@
+# SRI EDITING STUDIO — COMPLETE FULL-STACK WEB APPLICATION MASTER PROMPT
+
+## ROLE AND ENGINEERING EXPECTATIONS
+
+Act as a senior full-stack software engineer, software architect, UI/UX designer, DevOps engineer, security engineer and product designer with engineering standards comparable to high-quality production software teams at Google.
+
+Your task is to design and develop a complete, professional, responsive and secure web application named **SRI EDITING STUDIO**, based on the official logo I uploaded.
+
+Do not build a simple template website. Build a complete editing service platform with a premium cinematic UI, customer authentication, project submission, secure file uploads, pricing management, portfolio, reviews, admin replies, notification system, analytics, backend APIs, database integration, security and deployment support.
+
+The final application must be a website that can also be installed and used as an app through Progressive Web App (PWA) functionality.
+
+Think like an engineer before implementing. Design the architecture, data models, security rules, API structure, reusable components and deployment strategy before writing the code.
+
+---
+
+# 1. PROJECT OVERVIEW
+
+### Application name
+
+**SRI EDITING STUDIO**
+
+Use the exact branding and name represented in the uploaded logo.
+
+### Project objective
+
+Build a professional online platform for a photo and video editing studio where customers can:
+
+- Explore editing services.
+- View prices.
+- View portfolio projects.
+- Create an account.
+- Log in.
+- Submit editing requests.
+- Upload images and videos securely.
+- Track editing project status.
+- Communicate regarding their projects.
+- Request revisions.
+- Submit reviews.
+- Upload photos with reviews.
+- Rate services.
+- View admin replies.
+
+The administrator must be able to:
+
+- Manage services.
+- Manage prices.
+- Manage portfolio.
+- Manage customers.
+- Manage editing requests.
+- Manage project files.
+- Update project status.
+- Manage reviews.
+- Reply to reviews.
+- Manage promotional banners.
+- View analytics.
+- Manage notifications.
+- Manage the About section.
+- Manage contact details.
+- Manage website content.
+
+The entire platform must be branded as **SRI EDITING STUDIO**.
+
+---
+
+# 2. BRAND IDENTITY AND DESIGN SYSTEM
+
+Use my uploaded logo as the official logo.
+
+Do not replace the logo with an unrelated logo.
+
+### Brand name
+
+SRI EDITING STUDIO
+
+### Brand tagline
+
+**Turning Moments Into Visual Stories.**
+
+### Visual identity
+
+Create a premium cinematic creative-studio visual experience.
+
+Use a sophisticated visual system based on:
+
+- Black.
+- White.
+- Dark grey.
+- Metallic gold accents.
+- Subtle gradients.
+- Carefully selected accent colors.
+- Premium typography.
+- Cinematic lighting.
+- Glassmorphism where appropriate.
+- Modern card layouts.
+- Elegant spacing.
+- Responsive design.
+
+The design should feel like a premium creative agency, photography studio and cinematic video-editing portfolio.
+
+Avoid a generic template appearance.
+
+### Logo usage
+
+Use the uploaded official logo in:
+
+- Navbar.
+- Hero section.
+- Login page.
+- Signup page.
+- Admin dashboard.
+- Customer dashboard.
+- Footer.
+- Loading screen.
+- PWA icon where appropriate.
+
+Preserve the logo's identity.
+
+### Design standards
+
+- Consistent typography.
+- Consistent spacing.
+- Responsive layouts.
+- Professional color palette.
+- Clear visual hierarchy.
+- Readable text.
+- High contrast.
+- Accessibility.
+- Responsive image sizing.
+- Modern buttons.
+- Smooth transitions.
+- Elegant hover effects.
+- Animated cards.
+- Proper loading states.
+- Professional error states.
+
+Ensure that animations never make content unreadable.
+
+---
+
+# 3. HOMEPAGE / LANDING PAGE
+
+Create an impressive, immersive and professional homepage.
+
+The homepage must be the first impression of Sri Editing Studio.
+
+## Hero section
+
+Display:
+
+- Official logo.
+- SRI EDITING STUDIO.
+- Cinematic animation.
+- Professional introduction.
+- Animated tagline.
+- Call-to-action buttons.
+- Featured services.
+
+### Main tagline
+
+**Turning Moments Into Visual Stories.**
+
+### Introduction text
+
+"Welcome to Sri Editing Studio — a creative space where photographs, videos and ideas are transformed into visually captivating experiences. From cinematic photo edits to reels, shorts, wedding projects, festival designs, logos and professional video editing, every project is crafted with creativity, precision and storytelling."
+
+### Hero buttons
+
+- Explore Services.
+- View Pricing.
+- View Portfolio.
+- Request an Edit.
+
+Create a cinematic introduction animation using tasteful 3D elements.
+
+The hero section may include:
+
+- Floating image frames.
+- Animated video timeline.
+- Editing-themed elements.
+- Cinematic lighting.
+- 3D floating typography.
+- Subtle particles.
+- Camera-inspired visual elements.
+- Animated photo layers.
+- Motion graphics.
+
+Do not use excessively distracting animations.
+
+## Homepage sections
+
+Create the following:
+
+1. Hero section.
+2. About Sri Editing Studio.
+3. Featured editing services.
+4. Pricing overview.
+5. Portfolio showcase.
+6. Featured reviews.
+7. How the editing process works.
+8. Promotional banner.
+9. Contact section.
+10. Footer.
+
+---
+
+# 4. ABOUT SECTION
+
+Create a professional About section describing my editing profession.
+
+Use the following initial content:
+
+"Welcome to Sri Editing Studio, a creative space dedicated to transforming photographs and videos into memorable visual experiences. I work on photo editing, cinematic video editing, reels, shorts, wedding projects, festival designs, vlog editing and creative visual content. My goal is to combine creativity, precision and storytelling to create edits that match each client's vision."
+
+Create subsections:
+
+- About My Editing.
+- My Creative Approach.
+- My Services.
+- My Workflow.
+- My Commitment.
+
+Allow the administrator to edit the About section through the admin dashboard.
+
+Do not invent years of experience, qualifications, awards, business partnerships or real customer achievements.
+
+---
+
+# 5. COMPLETE EDITING SERVICE CATALOG
+
+Create a complete services section containing individual service cards and dedicated detailed service sections.
+
+Each service must include:
+
+- Service title.
+- Detailed description.
+- Price.
+- What is included.
+- Suitable use cases.
+- Portfolio preview.
+- Request service button.
+- Upload project button.
+- Contact button.
+
+The service catalog must be dynamically managed from the backend.
+
+Do not hardcode prices throughout the frontend.
+
+## SERVICE 1 — MOBILE PHOTO EDITING
+
+<text>Price: ₹30 – ₹80 per photo</text>
+
+Description:
+
+Professional mobile photo editing designed to transform ordinary photos into attractive, polished and creative images using modern mobile editing techniques.
+
+Services include:
+
+- Color correction.
+- Exposure adjustment.
+- Contrast enhancement.
+- Cinematic color grading.
+- Portrait enhancement.
+- Background enhancement.
+- Creative effects.
+- Aesthetic photo editing.
+- Social media photo editing.
+- Custom editing styles.
+
+Display:
+
+**₹30 – ₹80 per photo**
+
+## SERVICE 2 — MOBILE VIDEO EDITING
+
+<text>Price: ₹110 – ₹300 per video</text>
+
+Description:
+
+Creative mobile-based video editing for personal videos, social media content, memories, promotional clips and short creative videos.
+
+Services include:
+
+- Video trimming.
+- Smooth transitions.
+- Cinematic color grading.
+- Music synchronization.
+- Text animation.
+- Creative transitions.
+- Speed effects.
+- Basic motion effects.
+- Story-based editing.
+- Social media editing.
+
+Display:
+
+**₹110 – ₹300 per video**
+
+## SERVICE 3 — PC PHOTO EDITING
+
+<text>Price: ₹50 – ₹100 per photo</text>
+
+Description:
+
+Professional desktop photo editing for portraits, creative images, social media content, personal photography and customized visual designs.
+
+Services include:
+
+- Advanced color correction.
+- Color grading.
+- Image retouching.
+- Creative effects.
+- Background enhancement.
+- Photo manipulation.
+- Lighting correction.
+- Custom visual styling.
+- Professional image enhancement.
+
+Display:
+
+**₹50 – ₹100 per photo**
+
+## SERVICE 4 — PC SHORT VIDEO EDITING
+
+<text>Price: ₹150 – ₹600 per video</text>
+
+Description:
+
+Professional short-form video editing designed for social media, events, personal content, advertisements and creative storytelling.
+
+Services include:
+
+- Cinematic short video editing.
+- Advanced transitions.
+- Color grading.
+- Sound synchronization.
+- Motion graphics.
+- Text animation.
+- Visual effects.
+- Creative storytelling.
+- Promotional editing.
+- Social media video editing.
+
+Display:
+
+**₹150 – ₹600 per video**
+
+## SERVICE 5 — PC LONG VIDEO EDITING / VLOG EDITING
+
+<text>Starting price: ₹1,000</text>
+
+Description:
+
+Professional long-form video editing for vlogs, YouTube videos, travel videos, documentary-style videos, event videos, promotional content and storytelling projects.
+
+Services include:
+
+- Full video editing.
+- Storytelling structure.
+- Audio enhancement.
+- Cinematic color grading.
+- Transitions.
+- Text animation.
+- Motion graphics.
+- Intro and outro.
+- Background music integration.
+- Scene arrangement.
+- Video pacing.
+- YouTube-ready editing.
+
+Display:
+
+**Starting from ₹1,000**
+
+The final pricing may depend on video duration, complexity, effects, revisions and requirements.
+
+## SERVICE 6 — FESTIVAL PHOTO EDITING
+
+<text>Price: ₹150 per design</text>
+
+Description:
+
+Creative festival-themed photo editing for celebrations, special occasions, social media posts, promotional designs and festival greetings.
+
+Services include:
+
+- Festival posters.
+- Celebration photo edits.
+- Creative backgrounds.
+- Traditional-themed designs.
+- Typography.
+- Color enhancement.
+- Special effects.
+- Custom festival designs.
+
+Display:
+
+**₹150 per design**
+
+## SERVICE 7 — MARRIAGE / WEDDING PHOTO EDITING
+
+<text>Price: ₹150 per photo</text>
+
+Description:
+
+Creative wedding and marriage photo editing that enhances memorable moments with elegant color grading, lighting adjustments, visual enhancement and personalized styles.
+
+Services include:
+
+- Wedding photo color correction.
+- Portrait enhancement.
+- Cinematic tones.
+- Lighting correction.
+- Creative effects.
+- Couple photo enhancement.
+- Background enhancement.
+- Album-style visual enhancement.
+
+Display:
+
+**₹150 per photo**
+
+## SERVICE 8 — REELS EDITING
+
+<text>Price: ₹120 per reel</text>
+
+Description:
+
+Creative Instagram and social media reels designed with smooth transitions, music synchronization, cinematic effects and modern editing styles.
+
+Services include:
+
+- Instagram Reels.
+- Cinematic Reels.
+- Trending-style edits.
+- Friendship edits.
+- Birthday edits.
+- Travel edits.
+- College edits.
+- Event edits.
+- Personal reels.
+- Music synchronization.
+- Transitions.
+- Color grading.
+
+Display:
+
+**₹120 per reel**
+
+## SERVICE 9 — SHORTS EDITING
+
+Description:
+
+Creative YouTube Shorts and other vertical video editing designed for social media and content creation.
+
+Services include:
+
+- YouTube Shorts.
+- Vertical video editing.
+- Text animation.
+- Captions.
+- Creative transitions.
+- Music synchronization.
+- Color grading.
+- Promotional shorts.
+
+Allow the administrator to configure pricing.
+
+Initially display:
+
+**Contact for Pricing**
+
+## SERVICE 10 — WEDDING INTRO VIDEOS
+
+Description:
+
+Cinematic wedding and marriage introduction videos for invitations, events, couple introductions, pre-wedding presentations and wedding celebrations.
+
+Services include:
+
+- Cinematic couple introduction.
+- Wedding invitation video.
+- Creative title animations.
+- Photo-based introductions.
+- Cinematic transitions.
+- Music integration.
+- Custom themes.
+- Visual storytelling.
+
+Allow the administrator to configure pricing.
+
+Initially display:
+
+**Custom Pricing – Contact for Details**
+
+## SERVICE 11 — LOGO DESIGN / LOGO EDITING
+
+Description:
+
+Creative logo design and logo enhancement for businesses, personal brands, Instagram pages, editing studios, creators and small businesses.
+
+Services include:
+
+- Custom logo design.
+- Logo enhancement.
+- Typography logos.
+- Minimalist logos.
+- Creative logo concepts.
+- Brand visual design.
+- Logo animation, if requested.
+
+Allow the administrator to configure pricing.
+
+Initially display:
+
+**Custom Pricing – Contact for Details**
+
+---
+
+# 6. PRICING PAGE
+
+Create a dedicated professional pricing page.
+
+Display all services in premium animated cards.
+
+Every pricing card must display:
+
+- Service title.
+- Service description.
+- Price.
+- Price type.
+- What is included.
+- Suitable use cases.
+- Request an Edit button.
+- Upload Your Project button.
+
+Create service filters:
+
+- All Services.
+- Photo Editing.
+- Video Editing.
+- Mobile Editing.
+- PC Editing.
+- Social Media.
+- Wedding.
+- Festival.
+- Logo.
+- Custom Projects.
+
+Create an optional service comparison view.
+
+### Pricing management
+
+The admin must be able to:
+
+- Edit prices.
+- Change descriptions.
+- Add services.
+- Remove services.
+- Disable services.
+- Change pricing type.
+- Change promotional text.
+- Change service images.
+- Add inclusions.
+- Manage categories.
+
+The frontend must fetch pricing from the backend.
+
+Do not duplicate prices in separate frontend files.
+
+---
+
+# 7. AUTHENTICATION SYSTEM
+
+Implement a complete authentication system using Firebase Authentication.
+
+Create:
+
+- Login page.
+- Registration page.
+- Forgot password page.
+- Reset password flow.
+- Customer dashboard.
+- Profile page.
+- Logout.
+
+### Authentication features
+
+- Email and password login.
+- Registration.
+- Email verification where appropriate.
+- Password reset email.
+- Secure authentication.
+- Token verification.
+- Session handling.
+- Protected routes.
+- Login error messages.
+- Account profile.
+- Logout.
+- Authentication state management.
+
+Create a professionally animated authentication UI using the official Sri Editing Studio branding.
+
+Do not store plain-text passwords.
+
+Use Firebase Authentication rather than implementing custom password storage.
+
+Integrate Firebase Authentication with FastAPI by securely verifying Firebase ID tokens.
+
+Do not treat frontend authentication state as sufficient authorization.
+
+---
+
+# 8. CUSTOMER PROJECT REQUEST SYSTEM
+
+Create a fully functional editing project request system.
+
+Customers must be able to submit editing requests.
+
+### Project submission form
+
+Include:
+
+- Project title.
+- Editing category.
+- Project description.
+- Editing requirements.
+- Preferred style.
+- Reference links, optional.
+- Uploaded images or videos.
+- Customer notes.
+- Preferred delivery format, optional.
+- Contact details.
+
+The form must adapt to the selected editing category.
+
+For example:
+
+- Photo editing may request image uploads.
+- Video editing may request video files or securely supplied file links.
+- Reels may request music, reference links and editing style.
+- Wedding editing may request photographs and visual references.
+- Logo design may request business name and branding preferences.
+
+Allow multiple files where appropriate.
+
+Validate upload size and format.
+
+For large videos, use a secure upload workflow or securely managed file links where practical, and explain any upload size limitations.
+
+### Customer project features
+
+Customers must be able to:
+
+- Submit projects.
+- Receive a project ID.
+- View submitted projects.
+- View project status.
+- View project history.
+- View admin updates.
+- Submit additional information.
+- Upload additional files where permitted.
+- Request revisions.
+- View completed project details.
+- Submit reviews for eligible projects.
+
+Never publicly expose project uploads.
+
+---
+
+# 9. PROJECT MANAGEMENT WORKFLOW
+
+Create a backend-controlled project lifecycle.
+
+Every project must have a unique project ID.
+
+Each project must be associated with:
+
+- Customer ID.
+- Project ID.
+- Service category.
+- Project details.
+- Project files.
+- Price estimate, if available.
+- Project status.
+- Status history.
+- Admin.
+- Customer communications.
+- Created date.
+- Updated date.
+- Completion date, if applicable.
+
+### Project status workflow
+
+Request Submitted → Reviewing → Accepted → Editing in Progress → Ready for Review → Completed.
+
+Additional states:
+
+- Rejected.
+- Cancelled.
+- Waiting for Customer Information.
+- Revision Requested.
+
+### Revision workflow
+
+Ready for Review → Revision Requested → Editing in Progress → Ready for Review.
+
+### Status rules
+
+- Customers submit project requests.
+- Admin reviews requests.
+- Admin accepts or rejects requests.
+- Admin controls project status.
+- Customers view their own status.
+- Customers request revisions when permitted.
+- Admin communicates through project updates.
+- Admin marks projects completed.
+- Status changes must be recorded.
+- Invalid status transitions must be rejected.
+- Cancelled projects must follow defined rules.
+
+Implement project state transitions on the backend.
+
+Never allow customers to directly modify project status fields.
+
+---
+
+# 10. CUSTOMER DASHBOARD
+
+Create a professional customer dashboard.
+
+Include:
+
+- Dashboard overview.
+- My Projects.
+- Current Projects.
+- Completed Projects.
+- Revision Requests.
+- Notifications.
+- Profile.
+- Review History.
+- Logout.
+
+### Dashboard overview
+
+Display:
+
+- Total projects.
+- Active projects.
+- Completed projects.
+- Recent updates.
+- Latest notifications.
+- Recently submitted projects.
+
+### My Projects
+
+Display project cards or tables containing:
+
+- Project ID.
+- Project title.
+- Category.
+- Submission date.
+- Status.
+- Latest update.
+- Project details.
+
+Allow customers to open project details.
+
+### Project details
+
+Display:
+
+- Project description.
+- Uploaded files.
+- Status.
+- Status timeline.
+- Admin messages.
+- Revision history.
+- Additional information.
+- Revision request option where applicable.
+- Review submission when eligible.
+
+The customer dashboard must only access data belonging to the authenticated customer.
+
+---
+
+# 11. REVIEW SYSTEM WITH PHOTO UPLOADS AND ADMIN REPLIES
+
+Create a complete customer review system.
+
+Customers must be able to submit reviews for eligible completed projects.
+
+### Review submission
+
+Fields:
+
+- Display name.
+- Rating from 1 to 5 stars.
+- Review text.
+- Editing service category.
+- Project reference, where appropriate.
+- Photo uploads.
+- Submission date.
+
+Allow customers to upload multiple images with reviews, subject to file validation and upload limits.
+
+### Review display
+
+Each review card must contain:
+
+- Customer display name.
+- Star rating.
+- Review text.
+- Uploaded photos.
+- Image gallery.
+- Service category.
+- Review date.
+- Admin reply.
+
+### Review functionality
+
+- 1–5 star rating.
+- Review text.
+- Photo uploads.
+- Photo gallery.
+- Image preview.
+- Rating summary.
+- Average rating.
+- Number of approved reviews.
+- Review pagination.
+- Featured reviews.
+- Admin response.
+- Moderation.
+- Spam prevention.
+
+### Admin replies
+
+The admin must be able to:
+
+- View all submitted reviews.
+- Approve reviews.
+- Reject reviews.
+- Hide inappropriate reviews.
+- Reply to reviews.
+- Edit admin replies.
+- Feature reviews.
+- Manage reviews.
+
+The admin reply must appear directly below the original review.
+
+Only approved reviews must be publicly displayed.
+
+### Review privacy and moderation
+
+- Customers cannot modify moderation fields.
+- Customers cannot approve reviews.
+- Review images must be validated.
+- Spam protection must be implemented.
+- Rate limiting must be implemented.
+- Admin moderation must be backend-controlled.
+
+Do not create fake testimonials or fake ratings.
+
+---
+
+# 12. PORTFOLIO / CREATIVE GALLERY
+
+Create a dedicated portfolio page to showcase my editing work.
+
+Categories:
+
+- Mobile Photo Editing.
+- Mobile Video Editing.
+- PC Photo Editing.
+- PC Video Editing.
+- Reels.
+- Shorts.
+- Festival Editing.
+- Wedding Editing.
+- Wedding Intro Videos.
+- Logo Designs.
+- Vlog Editing.
+
+### Portfolio features
+
+- Image gallery.
+- Video showcase.
+- Category filters.
+- Responsive layout.
+- Lightbox.
+- Image preview.
+- Video playback.
+- Smooth animations.
+- Portfolio descriptions.
+- Featured projects.
+- Pagination or lazy loading.
+
+### Admin portfolio management
+
+The admin must be able to:
+
+- Upload images.
+- Upload videos where supported.
+- Add descriptions.
+- Edit portfolio entries.
+- Delete entries.
+- Select categories.
+- Feature entries.
+- Change display order.
+- Enable or disable entries.
+
+Do not publicly display private customer files without permission.
+
+Use placeholders initially and allow the admin to replace them.
+
+---
+
+# 13. CONTACT SYSTEM
+
+Create a professional Contact page.
+
+Include:
+
+- Contact form.
+- Name.
+- Email.
+- Phone number, optional.
+- Service category.
+- Project description.
+- Submit button.
+
+Create configurable contact information.
+
+Allow the admin to manage:
+
+- Email.
+- Phone number.
+- WhatsApp link.
+- Instagram.
+- Other social media links.
+- Contact text.
+- Business information.
+
+### Contact form
+
+- Validate inputs.
+- Prevent spam.
+- Use rate limiting.
+- Provide submission confirmation.
+- Notify the admin.
+- Store contact requests securely.
+
+Use placeholder links initially and allow the admin to configure them.
+
+---
+
+# 14. ADMIN DASHBOARD — ONE AUTHORIZED ADMIN
+
+Create a premium, completely protected administrative dashboard.
+
+### Admin authorization requirement
+
+Only one designated admin email address should have administrative access.
+
+Use a server-side configuration such as:
+
+ADMIN_EMAIL=your_admin_email@example.com
+
+The admin email must be configurable through secure environment variables.
+
+Do not hardcode the admin email into frontend authorization logic.
+
+Do not expose admin credentials.
+
+### Admin authentication
+
+Use Firebase Authentication.
+
+The backend must:
+
+1. Verify the Firebase ID token.
+2. Verify the authenticated identity.
+3. Validate the admin role or securely configured admin identity.
+4. Authorize the admin endpoint.
+5. Reject unauthorized requests.
+
+Use Firebase custom claims or a securely controlled backend authorization mechanism where appropriate.
+
+Do not allow a customer to create, modify or assign their own admin privileges.
+
+The admin dashboard must be protected both through frontend route guards and backend authorization.
+
+Frontend route guards are not a security boundary.
+
+### Admin dashboard overview
+
+Display:
+
+- Total customers.
+- Total projects.
+- Pending requests.
+- Accepted projects.
+- Editing projects.
+- Completed projects.
+- Rejected projects.
+- Total reviews.
+- Average rating.
+- Recent projects.
+- Recent reviews.
+- Recent contact messages.
+- Recent notifications.
+
+### Service management
+
+Admin can:
+
+- Create services.
+- Edit services.
+- Delete services.
+- Enable or disable services.
+- Change pricing.
+- Change pricing type.
+- Change descriptions.
+- Change images.
+- Change categories.
+- Manage inclusions.
+- Manage display order.
+
+### Project management
+
+Admin can:
+
+- View all project requests.
+- Search projects.
+- Filter projects.
+- View customer information.
+- View uploaded files securely.
+- Accept requests.
+- Reject requests.
+- Update status.
+- Add internal notes.
+- Send customer updates.
+- Request customer information.
+- Manage revision requests.
+- Mark projects completed.
+
+### Review management
+
+Admin can:
+
+- View reviews.
+- Approve reviews.
+- Reject reviews.
+- Hide reviews.
+- Reply to reviews.
+- Edit replies.
+- Feature reviews.
+- Delete reviews where appropriate.
+
+### Portfolio management
+
+Admin can:
+
+- Upload images.
+- Upload videos where supported.
+- Create portfolio entries.
+- Edit portfolio entries.
+- Delete entries.
+- Change categories.
+- Feature projects.
+
+### Banner management
+
+Admin can:
+
+- Upload promotional banners.
+- Add promotional text.
+- Edit banners.
+- Activate banners.
+- Deactivate banners.
+- Change banner order.
+
+### Website content management
+
+Admin can manage:
+
+- About section.
+- Tagline.
+- Hero description.
+- Contact information.
+- Social media links.
+- Promotional text.
+- Footer content.
+
+### Admin logout
+
+Create a clear logout button.
+
+---
+
+# 15. NOTIFICATION SYSTEM
+
+Implement an integrated notification system.
+
+### Admin notifications
+
+Trigger notifications when:
+
+- A new customer registers.
+- A new project request is submitted.
+- A customer uploads additional files.
+- A new review is submitted.
+- A new contact message arrives.
+- A revision request is submitted.
+- A project needs administrative attention.
+
+### Customer notifications
+
+Trigger notifications when:
+
+- A project request is submitted.
+- A project is accepted.
+- A project is rejected.
+- Project status changes.
+- Editing starts.
+- The project is ready for review.
+- A revision is requested or acknowledged.
+- A project is completed.
+- The admin sends an update.
+- A review is approved or moderated.
+
+### Notification interface
+
+Include:
+
+- Notification bell.
+- Notification counter.
+- Read/unread states.
+- Notification history.
+- Mark as read.
+- Mark all as read.
+- Notification timestamps.
+- Links to relevant project details.
+
+Use Firebase Firestore real-time listeners or backend WebSockets where appropriate.
+
+If live connections are unavailable, use a polling fallback.
+
+Ensure notifications are private and properly authorized.
+
+---
+
+# 16. ANALYTICS AND DASHBOARD VISUALIZATION
+
+Use Recharts or another suitable chart library.
+
+### Admin analytics
+
+Display:
+
+- Customer count.
+- Total projects.
+- Pending projects.
+- Completed projects.
+- Rejected projects.
+- Projects by category.
+- Project status distribution.
+- Monthly project requests.
+- Project completion trends.
+- Customer growth.
+- Average review rating.
+- Review count.
+- Popular editing services.
+- Contact message count.
+
+### Project analytics
+
+Display:
+
+- Projects by category.
+- Projects by status.
+- Monthly project volume.
+- Popular services.
+- Completion trends.
+- Revision request statistics.
+- Review statistics.
+
+### Customer analytics
+
+Display:
+
+- Total submitted projects.
+- Current projects.
+- Completed projects.
+- Recent activity.
+
+### Smart features architecture
+
+Prepare for future optional AI-assisted features such as:
+
+- Automatic service category suggestions.
+- Customer requirement analysis.
+- Editing style recommendations.
+- Smart project pricing suggestions.
+- Project complexity estimation.
+- Portfolio recommendations.
+- AI-assisted project descriptions.
+
+These features must be optional.
+
+Do not fabricate analytics.
+
+Use clearly labelled demo data only when real data is unavailable.
+
+Never represent demo statistics as real business information.
+
+---
+
+# 17. FRONTEND ARCHITECTURE
+
+Use the following technology stack:
+
+- React.
+- TypeScript.
+- Vite.
+- Tailwind CSS.
+- React Router.
+- Framer Motion.
+- Three.js.
+- React Three Fiber.
+- Drei.
+- Axios.
+- Recharts.
+- Lucide Icons.
+
+### Folder structure
+
+Organize the frontend professionally.
+
+frontend/
+
+- public/
+  - logo/
+  - images/
+  - videos/
+  - icons/
+- src/
+  - components/
+    - common/
+    - navbar/
+    - footer/
+    - cards/
+    - animations/
+    - forms/
+    - reviews/
+    - portfolio/
+    - pricing/
+    - notifications/
+  - layouts/
+    - MainLayout.tsx
+    - AuthLayout.tsx
+    - AdminLayout.tsx
+    - CustomerLayout.tsx
+  - pages/
+    - landing/
+    - about/
+    - services/
+    - pricing/
+    - portfolio/
+    - reviews/
+    - contact/
+    - auth/
+    - customer/
+    - admin/
+  - routes/
+  - services/
+    - api.ts
+    - authService.ts
+    - projectService.ts
+    - reviewService.ts
+    - portfolioService.ts
+    - pricingService.ts
+    - notificationService.ts
+  - hooks/
+  - context/
+  - utils/
+  - assets/
+  - styles/
+  - types/
+  - App.tsx
+  - main.tsx
+
+### Frontend standards
+
+- Use reusable components.
+- Use TypeScript types.
+- Create reusable layouts.
+- Create reusable service cards.
+- Create reusable pricing cards.
+- Create reusable review cards.
+- Create reusable forms.
+- Create reusable upload components.
+- Create reusable modals.
+- Create reusable dashboard widgets.
+- Create reusable API services.
+- Use proper state management.
+- Avoid unnecessary duplicated code.
+- Use proper error handling.
+- Use loading states.
+- Use empty states.
+- Use validation.
+- Use accessible components.
+
+### Responsive support
+
+Ensure the application works on:
+
+- Desktop.
+- Laptop.
+- Tablet.
+- Android.
+- iPhone.
+- Mobile browsers.
+
+### Frontend API integration
+
+Use Axios.
+
+Configure:
+
+- API base URL.
+- Request interceptors.
+- Authentication token handling.
+- Error handling.
+- Response handling.
+- Timeout handling where appropriate.
+
+Use environment variables for API URLs.
+
+Never expose private backend credentials in frontend code.
+
+---
+
+# 18. BACKEND ARCHITECTURE — FASTAPI
+
+Use Python and FastAPI.
+
+Create a modular, professional backend architecture.
+
+Suggested structure:
+
+backend/
+
+- app/
+  - main.py
+  - config.py
+  - dependencies.py
+  - security.py
+  - middleware/
+  - routes/
+    - auth.py
+    - users.py
+    - services.py
+    - pricing.py
+    - projects.py
+    - reviews.py
+    - portfolio.py
+    - notifications.py
+    - contact.py
+    - admin.py
+    - analytics.py
+  - schemas/
+  - models/
+  - services/
+  - repositories/
+  - utils/
+  - exceptions/
+- tests/
+- requirements.txt
+- .env.example
+- Dockerfile
+
+### Backend requirements
+
+- FastAPI.
+- Pydantic.
+- Firebase Admin SDK.
+- Firestore integration.
+- Authentication verification.
+- Authorization.
+- Modular routing.
+- Proper error handling.
+- Logging.
+- API validation.
+- Security headers.
+- Rate limiting.
+- File upload validation.
+- CORS.
+- API documentation.
+- Health check endpoint.
+- Testing.
+
+### Backend API modules
+
+Create APIs for:
+
+- Authentication verification.
+- Customer profile.
+- Services.
+- Pricing.
+- Project requests.
+- Project status.
+- Project history.
+- Project uploads.
+- Revision requests.
+- Reviews.
+- Review image uploads.
+- Admin replies.
+- Review moderation.
+- Portfolio.
+- Contact forms.
+- Notifications.
+- Admin dashboard.
+- Analytics.
+- Banner management.
+- Website content management.
+
+### API documentation
+
+Use FastAPI's built-in OpenAPI and Swagger UI.
+
+Provide a properly documented API.
+
+### API versioning
+
+Use a structured API namespace such as:
+
+/api/v1/
+
+---
+
+# 19. FIREBASE DATABASE AND STORAGE ARCHITECTURE
+
+Use Firebase for the platform's backend data services.
+
+### Firebase services
+
+- Firebase Authentication.
+- Firestore.
+- Firebase Storage or a securely configured alternative.
+- Firebase Admin SDK.
+
+### Suggested Firestore collections
+
+users
+
+services
+
+projects
+
+reviews
+
+portfolio
+
+notifications
+
+contacts
+
+banners
+
+settings
+
+project_history
+
+review_replies, if separated from review records.
+
+### Database structure
+
+Design suitable document schemas.
+
+Every database record must contain appropriate:
+
+- IDs.
+- Created timestamps.
+- Updated timestamps.
+- Ownership fields.
+- Status fields.
+- Validation rules.
+
+### Users
+
+Store:
+
+- User ID.
+- Display name.
+- Email.
+- Account status.
+- Profile information.
+- Role or securely controlled authorization data.
+- Created timestamp.
+
+Do not store passwords in Firestore.
+
+### Services
+
+Store:
+
+- Service ID.
+- Service name.
+- Category.
+- Description.
+- Price.
+- Pricing type.
+- Inclusions.
+- Display order.
+- Active status.
+- Image references.
+- Created timestamp.
+- Updated timestamp.
+
+### Projects
+
+Store:
+
+- Project ID.
+- Customer ID.
+- Category.
+- Title.
+- Description.
+- Requirements.
+- File references.
+- Status.
+- Price estimate, if applicable.
+- Admin updates.
+- Revision information.
+- Status history references.
+- Created timestamp.
+- Updated timestamp.
+- Completion timestamp, if applicable.
+
+### Reviews
+
+Store:
+
+- Review ID.
+- Customer ID.
+- Display name.
+- Project ID, if applicable.
+- Category.
+- Rating.
+- Review text.
+- Image references.
+- Moderation status.
+- Admin reply.
+- Featured status.
+- Created timestamp.
+
+### Notifications
+
+Store:
+
+- Notification ID.
+- Recipient ID.
+- Notification type.
+- Title.
+- Message.
+- Related project ID, if applicable.
+- Read status.
+- Created timestamp.
+
+### Portfolio
+
+Store:
+
+- Portfolio ID.
+- Title.
+- Description.
+- Category.
+- Media references.
+- Featured status.
+- Display order.
+- Created timestamp.
+
+### Security rules
+
+Implement secure Firebase rules.
+
+Ensure:
+
+- Customers cannot access other customers' projects.
+- Customers cannot access other customers' private files.
+- Customers cannot modify admin roles.
+- Customers cannot change review moderation fields.
+- Customers cannot modify admin replies.
+- Customers cannot access admin-only data.
+- Private files remain private.
+- Admin privileges are securely controlled.
+- Storage uploads are validated.
+- Database access is properly restricted.
+
+Use backend authorization for privileged operations.
+
+Do not assume Firestore rules alone are sufficient for every backend operation.
+
+---
+
+# 20. FILE UPLOAD AND MEDIA MANAGEMENT
+
+Implement a secure file-upload system.
+
+Allow uploads for:
+
+- Project photos.
+- Project videos where supported.
+- Project reference files.
+- Review images.
+- Portfolio media.
+- Promotional banners.
+
+### Upload features
+
+- Upload validation.
+- File size limits.
+- File type validation.
+- File ownership validation.
+- Secure storage.
+- Upload progress.
+- Upload error handling.
+- Preview.
+- Removal before submission where appropriate.
+
+### File security
+
+- Do not publicly expose private customer uploads.
+- Validate actual file types where practical.
+- Avoid trusting filenames or extensions.
+- Restrict upload size.
+- Restrict upload permissions.
+- Use secure storage access.
+- Prevent unauthorized file retrieval.
+- Avoid storing unnecessary sensitive information.
+
+Use Firebase Storage or a securely configured storage service.
+
+For larger videos, consider resumable uploads or an alternative secure media-storage workflow.
+
+Explain the storage limits and costs of the selected solution.
+
+---
+
+# 21. SECURITY ARCHITECTURE
+
+Security must be implemented from the beginning.
+
+### Authentication
+
+Use Firebase Authentication.
+
+Verify Firebase ID tokens through Firebase Admin SDK in FastAPI.
+
+### Authorization
+
+Implement:
+
+- Customer authorization.
+- Admin authorization.
+- Ownership checks.
+- Protected API endpoints.
+- Protected frontend routes.
+
+### Admin restriction
+
+Only one configured admin email should have access to the admin dashboard.
+
+Use a server-side configuration:
+
+ADMIN_EMAIL=your_admin_email@example.com
+
+Do not expose the configured admin email as an authorization rule in frontend code.
+
+### Security features
+
+- Token verification.
+- Backend authorization.
+- Input validation.
+- Input sanitization.
+- Rate limiting.
+- CORS.
+- Secure environment variables.
+- Security headers.
+- HTTPS.
+- Secure uploads.
+- Ownership checks.
+- Abuse prevention.
+- Logging.
+- Secure error handling.
+- Protection against common web vulnerabilities.
+- Admin access restrictions.
+
+### Secrets
+
+Never expose:
+
+- Firebase service account private keys.
+- JWT secrets.
+- Backend secrets.
+- Storage credentials.
+- Payment credentials.
+- Private API keys.
+
+Never commit secrets to GitHub.
+
+### Payment architecture
+
+The platform may initially operate without integrated payments.
+
+Prepare an optional payment architecture for future expansion.
+
+If payment functionality is added:
+
+- Use a trusted payment gateway.
+- Verify payment status on the backend.
+- Do not trust frontend payment status.
+- Do not store card information.
+- Protect payment-related endpoints.
+- Use verified webhooks where supported.
+
+Do not simulate a successful payment as a real payment.
+
+---
+
+# 22. CLOUDflare SECURITY AND INFRASTRUCTURE
+
+Use Cloudflare for security and infrastructure where appropriate.
+
+### Cloudflare integration
+
+Prepare configuration for:
+
+- DNS.
+- HTTPS.
+- SSL/TLS.
+- CDN.
+- WAF where available.
+- Bot protection where available.
+- Rate limiting where available.
+- Domain security.
+- API protection.
+- Turnstile.
+- Security headers.
+
+### Turnstile
+
+Integrate Cloudflare Turnstile where appropriate for:
+
+- Contact form.
+- Public review submission.
+- Signup protection where appropriate.
+- Other public forms.
+
+Verify Turnstile responses on the backend.
+
+Do not rely on frontend-only verification.
+
+### Deployment architecture
+
+Use:
+
+- GitHub for source code.
+- Frontend hosting for React.
+- Backend hosting for FastAPI.
+- Firebase for authentication, database and storage.
+- Cloudflare for DNS, security and traffic protection.
+
+Choose suitable free or low-cost deployment options where available.
+
+Do not assume every service will remain free.
+
+Explain:
+
+- Free-tier limitations.
+- Storage limits.
+- Bandwidth limits.
+- Hosting limitations.
+- Potential charges.
+- Required configuration.
+
+Do not expose backend secrets through Cloudflare or frontend deployment settings.
+
+---
+
+# 23. GITHUB AND CI/CD
+
+Prepare the project for GitHub.
+
+Create:
+
+- README.md.
+- .gitignore.
+- Frontend code.
+- Backend code.
+- requirements.txt.
+- package.json.
+- .env.example.
+- API documentation.
+- Deployment guide.
+- Firebase guide.
+- Security guide.
+
+### GitHub standards
+
+- Organized repository.
+- Clear folder structure.
+- Meaningful commits.
+- Proper documentation.
+- Environment configuration.
+- No secrets committed.
+- No unnecessary dependencies.
+
+### CI/CD
+
+Where practical, create GitHub Actions workflows for:
+
+- Frontend build validation.
+- Backend test execution.
+- Type checking.
+- Basic linting.
+- Deployment workflows where supported.
+
+Do not deploy automatically in a way that exposes secrets or insecure configuration.
+
+---
+
+# 24. PROGRESSIVE WEB APP
+
+Convert SRI EDITING STUDIO into an installable PWA.
+
+### PWA requirements
+
+- manifest.json.
+- Service worker.
+- App icon.
+- Splash screen configuration.
+- Installable application.
+- Responsive layouts.
+- Offline support for selected public pages.
+- App-like navigation.
+- Fast loading.
+- Mobile-friendly design.
+
+### Installation
+
+Allow users to install the application on supported devices.
+
+Use the uploaded logo where appropriate for app branding.
+
+### Offline support
+
+Support selected public content and static assets where practical.
+
+Do not cache:
+
+- Private project data.
+- Authentication tokens.
+- Private customer uploads.
+- Sensitive admin information.
+
+Handle offline conditions gracefully.
+
+---
+
+# 25. 3D ANIMATIONS AND VISUAL EXPERIENCE
+
+Use Three.js, React Three Fiber and Drei for selected 3D experiences.
+
+Use Framer Motion for interface animations.
+
+### Animation features
+
+- 3D hero scene.
+- Floating photo frames.
+- Animated editing timeline.
+- Cinematic visual effects.
+- Particle effects.
+- Floating objects.
+- Animated typography.
+- Smooth transitions.
+- Scroll-triggered animations.
+- Interactive service cards.
+- Animated pricing cards.
+- Portfolio hover effects.
+- Review animations.
+- Loading animation.
+- Promotional banners.
+
+### Performance standards
+
+- Avoid excessive 3D scenes.
+- Optimize textures.
+- Optimize models.
+- Lazy-load heavy scenes.
+- Avoid unnecessary animation loops.
+- Reduce GPU-intensive effects on mobile.
+- Respect reduced-motion settings.
+- Use CSS animation when 3D is unnecessary.
+
+Animations must enhance the editing-studio identity without reducing usability.
+
+---
+
+# 26. PERFORMANCE, ACCESSIBILITY AND QUALITY
+
+Follow production-oriented engineering practices.
+
+### Performance
+
+- Lazy loading.
+- Code splitting.
+- Optimized images.
+- Responsive image sizing.
+- Efficient React components.
+- Avoid unnecessary re-renders.
+- Efficient database queries.
+- Pagination.
+- Media optimization.
+- Performance-conscious animation.
+
+### Accessibility
+
+- Semantic HTML.
+- Accessible buttons.
+- Keyboard navigation.
+- Readable text.
+- Sufficient contrast.
+- Accessible form labels.
+- Accessible dialogs.
+- Reduced-motion support.
+- Appropriate image alt text.
+
+### Error handling
+
+Create:
+
+- Error boundaries.
+- API error handling.
+- Loading states.
+- Empty states.
+- Validation messages.
+- Upload error messages.
+- Authentication error messages.
+- Network error handling.
+
+---
+
+# 27. TESTING
+
+Implement meaningful tests.
+
+### Frontend testing
+
+Test:
+
+- Navigation.
+- Login forms.
+- Authentication state.
+- Protected routes.
+- Service cards.
+- Pricing display.
+- Project submission forms.
+- Upload components.
+- Review submission.
+- Admin dashboard access.
+
+### Backend testing
+
+Test:
+
+- API endpoints.
+- Authentication.
+- Admin authorization.
+- Customer ownership.
+- Project status transitions.
+- Review moderation.
+- Upload validation.
+- Pricing management.
+- Notification authorization.
+
+### Security testing
+
+Verify:
+
+- Unauthorized admin access is blocked.
+- Customers cannot view other customers' projects.
+- Customers cannot modify project statuses.
+- Customers cannot access private files.
+- Customers cannot modify admin records.
+- Customers cannot approve reviews.
+- Invalid uploads are rejected.
+- Invalid status transitions are rejected.
+
+### Integration testing
+
+Test the complete workflow:
+
+1. Customer registers.
+2. Customer logs in.
+3. Customer selects an editing service.
+4. Customer submits a project.
+5. Admin receives notification.
+6. Admin reviews the project.
+7. Admin accepts the project.
+8. Admin updates status.
+9. Customer receives notification.
+10. Admin marks the project ready for review.
+11. Customer requests revision where appropriate.
+12. Admin completes the project.
+13. Customer submits a review with photos.
+14. Admin approves the review.
+15. Admin replies.
+16. Review appears publicly.
+
+Ensure the workflow is actually connected to the backend.
+
+---
+
+# 28. DEVELOPMENT WORKFLOW FOR GEMINI
+
+Do not attempt to generate the entire project as a single unstructured code dump.
+
+Work in carefully defined implementation phases.
+
+## PHASE 1 — ARCHITECTURE
+
+First:
+
+- Analyze the complete requirements.
+- Create the system architecture.
+- Create the folder structure.
+- Define database collections.
+- Define data models.
+- Define API endpoints.
+- Define authentication architecture.
+- Define admin authorization.
+- Define project workflow.
+- Define deployment architecture.
+- Define security boundaries.
+
+Provide a brief architecture summary.
+
+Then begin implementation.
+
+## PHASE 2 — DESIGN SYSTEM
+
+Implement:
+
+- Branding.
+- Logo.
+- Color palette.
+- Typography.
+- Navigation.
+- Footer.
+- Responsive layouts.
+- Animation system.
+- Reusable UI components.
+
+## PHASE 3 — PUBLIC FRONTEND
+
+Implement:
+
+- Landing page.
+- About.
+- Services.
+- Pricing.
+- Portfolio.
+- Reviews.
+- Contact.
+- Navigation.
+- Footer.
+
+## PHASE 4 — AUTHENTICATION
+
+Implement:
+
+- Firebase configuration.
+- Registration.
+- Login.
+- Password reset.
+- Protected routes.
+- Customer profile.
+- Logout.
+- Backend token verification.
+
+## PHASE 5 — BACKEND
+
+Implement:
+
+- FastAPI.
+- Modular architecture.
+- Firebase Admin SDK.
+- API routes.
+- Database access.
+- Authentication verification.
+- Authorization.
+- Validation.
+- Logging.
+- Error handling.
+
+## PHASE 6 — CUSTOMER PROJECT SYSTEM
+
+Implement:
+
+- Project request form.
+- Secure uploads.
+- Project IDs.
+- Customer dashboard.
+- Project history.
+- Project status.
+- Revision requests.
+
+## PHASE 7 — ADMIN PANEL
+
+Implement:
+
+- Admin authentication.
+- Admin authorization.
+- Dashboard.
+- Project management.
+- Service management.
+- Pricing management.
+- Portfolio management.
+- Review management.
+- Admin replies.
+- Banner management.
+- Website content management.
+
+## PHASE 8 — NOTIFICATIONS
+
+Implement:
+
+- Customer notifications.
+- Admin notifications.
+- Real-time updates where appropriate.
+- Polling fallback.
+- Notification history.
+
+## PHASE 9 — ANALYTICS
+
+Implement:
+
+- Dashboard analytics.
+- Charts.
+- Project distribution.
+- Customer statistics.
+- Review statistics.
+- Service statistics.
+
+## PHASE 10 — PWA AND SECURITY
+
+Implement:
+
+- PWA.
+- Service worker.
+- Offline support.
+- Cloudflare configuration.
+- Turnstile.
+- Security rules.
+- API protection.
+
+## PHASE 11 — TESTING
+
+Test:
+
+- Frontend.
+- Backend.
+- Authentication.
+- Authorization.
+- Project workflow.
+- Reviews.
+- Uploads.
+- Notifications.
+- Admin functionality.
+
+## PHASE 12 — DEPLOYMENT
+
+Prepare:
+
+- GitHub repository.
+- README.
+- Environment variables.
+- Firebase setup.
+- Frontend deployment.
+- Backend deployment.
+- Cloudflare setup.
+- Domain configuration.
+- PWA installation instructions.
+
+---
+
+# 29. STRICT IMPLEMENTATION RULES
+
+Follow these rules throughout the development process:
+
+1. Build real functionality, not just a decorative frontend.
+2. Do not use fake buttons.
+3. Do not use fake authentication.
+4. Do not use fake backend responses as final functionality.
+5. Do not fabricate reviews.
+6. Do not fabricate customers.
+7. Do not fabricate completed projects.
+8. Do not expose private files.
+9. Do not expose secrets.
+10. Do not allow unauthorized admin access.
+11. Do not implement admin authorization only in the frontend.
+12. Do not allow customers to modify administrative data.
+13. Do not hardcode pricing in multiple frontend files.
+14. Do not duplicate business logic unnecessarily.
+15. Do not remove working features during future development.
+16. Do not restart the project unnecessarily.
+17. Use reusable components.
+18. Use proper TypeScript types.
+19. Use proper backend validation.
+20. Use secure database rules.
+21. Use proper error handling.
+22. Test major features.
+23. Document every necessary configuration.
+24. Explain external credentials that are required.
+25. Ensure deployment is realistic.
+26. Explain limitations honestly.
+27. Ensure mobile usability.
+28. Optimize performance.
+29. Maintain consistent branding.
+30. Preserve the uploaded Sri Editing Studio logo.
+
+If a feature requires an external service or credential, implement the integration structure properly and explain exactly how to configure it.
+
+If the project becomes too large for one response, continue in phases using the existing project files and architecture. Never discard previously implemented features.
+
+---
+
+# 30. FINAL EXPECTED RESULT
+
+The final application must be a complete professional platform for **SRI EDITING STUDIO**.
+
+It must include:
+
+- Premium landing page.
+- Uploaded official logo.
+- Cinematic 3D animations.
+- About section.
+- Complete editing service catalog.
+- Pricing page.
+- Portfolio gallery.
+- Contact page.
+- Authentication.
+- Registration.
+- Forgot password.
+- Logout.
+- Customer dashboard.
+- Project submission.
+- Secure photo and video upload workflow.
+- Project status tracking.
+- Project history.
+- Revision requests.
+- Admin dashboard.
+- Single-admin authorization.
+- Service management.
+- Pricing management.
+- Portfolio management.
+- Review submission.
+- Review image uploads.
+- Star ratings.
+- Review moderation.
+- Admin replies.
+- Notification system.
+- Analytics.
+- FastAPI backend.
+- Firebase integration.
+- Firebase security rules.
+- Cloudflare security.
+- GitHub repository.
+- CI/CD where practical.
+- Progressive Web App.
+- Responsive mobile design.
+- Testing.
+- Documentation.
+- Deployment guide.
+
+The final application should feel like a premium, cinematic creative editing studio with professional engineering, secure architecture, excellent UX, smooth animations, real functionality and a deployment-ready structure.
+
+**Build SRI EDITING STUDIO as a real full-stack product, not just a website mockup.**
+
+Begin by analyzing the requirements and producing the architecture and development plan, then implement the project phase by phase without losing the overall vision.
