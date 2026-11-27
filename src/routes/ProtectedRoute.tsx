@@ -6,11 +6,13 @@ import { useAuth } from '../context/AuthContext';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  disallowAdmin?: boolean;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireAdmin = false,
+  disallowAdmin = false,
 }) => {
   const { user, isAdmin, isAuthReady, emailVerified, resendVerification, refreshUserSession, logout } = useAuth();
   const location = useLocation();
@@ -74,6 +76,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (requireAdmin && !isAdmin) {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  if (disallowAdmin && isAdmin) {
+    return <Navigate to="/admin" replace />;
   }
 
   return <>{children}</>;

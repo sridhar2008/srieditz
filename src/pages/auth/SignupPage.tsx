@@ -93,10 +93,10 @@ export const SignupPage: React.FC = () => {
               We sent a verification link to <span className="font-medium text-white">{email}</span>. Verify your inbox, then visit your dashboard.
             </p>
             <Link
-              to="/dashboard"
+              to={isAdmin ? '/admin' : '/dashboard'}
               className="inline-block px-4 py-2 rounded-lg bg-[#D4AF37] text-black text-xs font-semibold"
             >
-              Continue to Dashboard
+              {isAdmin ? 'Continue to Admin Panel' : 'Continue to Dashboard'}
             </Link>
           </div>
         ) : (

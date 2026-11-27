@@ -1041,3 +1041,15 @@ export function formatStudioDate(ts: unknown): string {
     year: 'numeric',
   }).format(new Date(ms));
 }
+
+export function formatStudioDateTime(ts: unknown): string {
+  const ms = getMillis(ts);
+  if (!ms) return 'Just now';
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(ms));
+}

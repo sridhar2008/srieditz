@@ -18,8 +18,12 @@ export const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (user && isAuthReady) {
-      if (from) navigate(from, { replace: true });
-      else navigate(isAdmin ? '/admin' : '/dashboard', { replace: true });
+      if (isAdmin) {
+        const adminTarget = from && from.startsWith('/admin') ? from : '/admin';
+        navigate(adminTarget, { replace: true });
+      } else {
+        navigate(from || '/dashboard', { replace: true });
+      }
     }
   }, [user, isAdmin, isAuthReady, from, navigate]);
 

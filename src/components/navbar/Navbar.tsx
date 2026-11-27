@@ -66,7 +66,7 @@ export const Navbar: React.FC = () => {
             onClick={handlePrimaryClick}
             className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#D4AF37] text-black text-xs font-semibold hover:bg-[#e5c24f] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
-            {!user ? 'Sign In' : isAdmin ? 'Admin Studio' : 'Dashboard'}
+            {!user ? 'Sign In' : isAdmin ? 'Admin Panel' : 'Dashboard'}
           </button>
           <button
             type="button"
@@ -99,19 +99,21 @@ export const Navbar: React.FC = () => {
               {link.label}
             </Link>
           ))}
-          <Link
-            to="/request-edit"
-            onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[#D4AF37] hover:bg-zinc-900"
-          >
-            Request an Edit
-          </Link>
+          {!isAdmin && (
+            <Link
+              to="/request-edit"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[#D4AF37] hover:bg-zinc-900"
+            >
+              Request an Edit
+            </Link>
+          )}
           <button
             type="button"
             onClick={handlePrimaryClick}
             className="w-full mt-2 py-2.5 rounded-lg bg-[#D4AF37] text-black text-sm font-semibold cursor-pointer"
           >
-            {!user ? 'Sign In' : isAdmin ? 'Admin Studio' : 'My Dashboard'}
+            {!user ? 'Sign In' : isAdmin ? 'Admin Panel' : 'My Dashboard'}
           </button>
         </div>
       )}

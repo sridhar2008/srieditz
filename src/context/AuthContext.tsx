@@ -86,17 +86,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   const hydrateIdentity = async (firebaseUser: User | null) => {
-    setUser(firebaseUser);
     if (!firebaseUser) {
+      setUser(null);
       setProfile(null);
       setIsAdmin(false);
       setIsAuthReady(true);
       return;
     }
 
+    setIsAuthReady(false);
     const emailNormalized = firebaseUser.email?.trim().toLowerCase() || '';
     const isVerifiedAdminEmail =
       Boolean(firebaseUser.emailVerified) && ADMIN_EMAILS.includes(emailNormalized);
+
+    setUser(firebaseUser);
+    setIsAdmin(isVerifiedAdminEmail);
 
     try {
       const identity = await fetchAuthIdentity();

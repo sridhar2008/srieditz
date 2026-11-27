@@ -1,14 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   BarChart3,
   Check,
+  CheckCircle2,
+  Clock,
+  Eye,
   FolderKanban,
+  HelpCircle,
   Image as ImageIcon,
   Layers,
   LogOut,
   Mail,
   Megaphone,
+  PlayCircle,
   Plus,
   Search,
   Send,
@@ -16,10 +22,12 @@ import {
   Star,
   Trash2,
   Users,
+  XCircle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import {
   ALLOWED_ADMIN_TRANSITIONS,
+  DEFAULT_ADMIN_STATUS_NOTES,
   PORTFOLIO_CATEGORIES,
   PRICING_FILTERS,
 } from '../../data/defaultCatalog';
@@ -32,6 +40,7 @@ import {
   deletePortfolioItem,
   deleteService,
   formatStudioDate,
+  formatStudioDateTime,
   saveBanner,
   savePortfolioItem,
   saveService,
@@ -43,6 +52,7 @@ import {
   subscribeAllReviews,
   subscribeBanners,
   subscribePortfolio,
+  subscribeProjectHistory,
   subscribeProjectMessages,
   subscribeServices,
 } from '../../services/studioService';
@@ -53,6 +63,7 @@ import {
   EditingService,
   PortfolioItem,
   PricingType,
+  ProjectHistoryEntry,
   ProjectMessage,
   ProjectStatus,
   PromoBanner,
@@ -81,7 +92,10 @@ type AdminSection =
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings }) => {
   const { user, logout } = useAuth();
-  const [section, setSection] = useState<AdminSection>('overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [section, setSection] = useState<AdminSection>(() =>
+    searchParams.get('project') ? 'projects' : 'overview'
+  );
 
   const [projects, setProjects] = useState<EditingProject[]>([]);
   const [services, setServices] = useState<EditingService[]>([]);
@@ -94,14 +108,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
   // Project Management state
   const [projSearch, setProjSearch] = useState('');
   const [projStatusFilter, setProjStatusFilter] = useState<string>('All');
-  const [selectedProjId, setSelectedProjId] = useState<string>('');
+  const [selectedProjId, setSelectedProjId] = useState<string>(searchParams.get('project') || '');
   const [nextStatus, setNextStatus] = useState<ProjectStatus>('Reviewing');
   const [statusNote, setStatusNote] = useState('');
   const [priceEstimateInput, setPriceEstimateInput] = useState('');
   const [internalNotesInput, setInternalNotesInput] = useState('');
+  const [projHistory, setProjHistory] = useState<ProjectHistoryEntry[]>([]);
   const [projMessages, setProjMessages] = useState<ProjectMessage[]>([]);
   const [adminMsgInput, setAdminMsgInput] = useState('');
   const [feedbackMsg, setFeedbackMsg] = useState('');
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   // Service Form state
   const [editingService, setEditingService] = useState<Omit<EditingService, 'createdAt' | 'updatedAt'> | null>(null);
@@ -134,6 +150,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
   }, [settings]);
 
   useEffect(() => {
+    const paramProj = searchParams.get('project');
+    if (paramProj) {
+      setSelectedProjId(paramProj);
+      setSection('projects');
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     const unsubs = [
       subscribeAllProjects((list) => {
         setProjects(list);
@@ -156,6 +180,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
 
   useEffect(() => {
     if (!selectedProject) {
+      setProjHistory([]);
       setProjMessages([]);
       return;
     }
@@ -164,8 +189,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
     setPriceEstimateInput(selectedProject.priceEstimate || '');
     setInternalNotesInput(selectedProject.internalNotes || '');
     setStatusNote('');
-    const unsub = subscribeProjectMessages(selectedProject.id, setProjMessages);
-    return () => unsub();
+    const unsubHist = subscribeProjectHistory(selectedProject.id, setProjHistory);
+    const unsubMsg = subscribeProjectMessages(selectedProject.id, setProjMessages);
+    return () => {
+      unsubHist();
+      unsubMsg();
+    };
   }, [selectedProject?.id, selectedProject?.status]);
 
   const filteredProjects = useMemo(() => {
@@ -182,28 +211,44 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
     });
   }, [projects, projSearch, projStatusFilter]);
 
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = { All: projects.length };
+    projects.forEach((p) => {
+      counts[p.status] = (counts[p.status] || 0) + 1;
+    });
+    return counts;
+  }, [projects]);
+
   const notifySaved = (msg: string) => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(''), 4000);
   };
 
-  const handleUpdateProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user || !selectedProject) return;
+  const applyProjectTransition = async (targetStatus: ProjectStatus, customNote?: string) => {
+    if (!user || !selectedProject || updatingStatus) return;
+    setUpdatingStatus(true);
     try {
+      const effectiveNote = (customNote ?? statusNote).trim() || DEFAULT_ADMIN_STATUS_NOTES[targetStatus];
       await adminUpdateProjectStatus({
         project: selectedProject,
         adminUid: user.uid,
-        nextStatus,
-        updateNote: statusNote,
+        nextStatus: targetStatus,
+        updateNote: effectiveNote,
         priceEstimate: priceEstimateInput,
         internalNotes: internalNotesInput,
       });
       setStatusNote('');
-      notifySaved(`Project ${selectedProject.projectCode} updated to "${nextStatus}".`);
+      notifySaved(`Project ${selectedProject.projectCode} updated to "${targetStatus}".`);
     } catch (err) {
       notifySaved(err instanceof Error ? err.message : 'Update failed.');
+    } finally {
+      setUpdatingStatus(false);
     }
+  };
+
+  const handleUpdateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await applyProjectTransition(nextStatus);
   };
 
   const handleAdminMessage = async (e: React.FormEvent) => {
@@ -371,197 +416,314 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
 
       {/* 2. PROJECT MANAGEMENT */}
       {section === 'projects' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div className="lg:col-span-5 space-y-3">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="search"
-                  value={projSearch}
-                  onChange={(e) => setProjSearch(e.target.value)}
-                  placeholder="Search ID, title, customer..."
-                  className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
-                />
-              </div>
-              <select
-                value={projStatusFilter}
-                onChange={(e) => setProjStatusFilter(e.target.value)}
-                className="px-2.5 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
-              >
-                <option value="All">All Statuses</option>
-                {Object.keys(ALLOWED_ADMIN_TRANSITIONS).map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2 max-h-[640px] overflow-y-auto pr-1">
-              {filteredProjects.length === 0 ? (
-                <div className="rounded-xl bg-[#101014] border border-zinc-800 p-6 text-center text-xs text-zinc-500">
-                  No project requests found.
-                </div>
-              ) : (
-                filteredProjects.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setSelectedProjId(p.id)}
-                    className={`w-full text-left rounded-xl p-4 border transition-colors cursor-pointer space-y-1.5 ${
-                      selectedProject?.id === p.id
-                        ? 'bg-[#15151b] border-[#D4AF37]'
-                        : 'bg-[#101014] border-zinc-800 hover:border-zinc-700'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-mono-tabular text-[#D4AF37] font-semibold">{p.projectCode}</span>
-                      <span className="text-zinc-300">{p.status}</span>
-                    </div>
-                    <p className="text-sm font-semibold text-white truncate">{p.title}</p>
-                    <p className="text-xs text-zinc-400">
-                      {p.customerName} · {p.serviceTitle}
-                    </p>
-                  </button>
-                ))
-              )}
-            </div>
+        <div className="space-y-4">
+          {/* Quick Status Filter Bar */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {(
+              [
+                'All',
+                'Request Submitted',
+                'Reviewing',
+                'Accepted',
+                'Editing in Progress',
+                'Ready for Review',
+                'Revision Requested',
+                'Waiting for Customer Information',
+                'Completed',
+                'Rejected',
+              ] as const
+            ).map((statusKey) => {
+              const count = statusCounts[statusKey] || 0;
+              const active = projStatusFilter === statusKey;
+              return (
+                <button
+                  key={statusKey}
+                  type="button"
+                  onClick={() => setProjStatusFilter(statusKey)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 tabular-nums ${
+                    active
+                      ? 'bg-[#D4AF37] text-black font-semibold'
+                      : 'bg-[#101014] border border-zinc-800 text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {statusKey === 'Waiting for Customer Information' ? 'Waiting Info' : statusKey} ({count})
+                </button>
+              );
+            })}
           </div>
 
-          <div className="lg:col-span-7">
-            {!selectedProject ? (
-              <div className="rounded-2xl bg-[#101014] border border-zinc-800 p-10 text-center text-sm text-zinc-500">
-                Select a project request to review files, update workflow state, and communicate with the client.
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-5 space-y-3">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="search"
+                    value={projSearch}
+                    onChange={(e) => setProjSearch(e.target.value)}
+                    placeholder="Search ID, title, customer..."
+                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
+                  />
+                </div>
+                <select
+                  value={projStatusFilter}
+                  onChange={(e) => setProjStatusFilter(e.target.value)}
+                  className="px-2.5 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
+                >
+                  <option value="All">All Statuses</option>
+                  {Object.keys(ALLOWED_ADMIN_TRANSITIONS).map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
               </div>
-            ) : (
-              <div className="rounded-2xl bg-[#101014] border border-zinc-800 p-6 space-y-6">
-                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-zinc-800 pb-4">
-                  <div>
-                    <p className="text-xs font-mono-tabular text-[#D4AF37]">{selectedProject.projectCode}</p>
-                    <h2 className="text-2xl font-display font-semibold text-white">{selectedProject.title}</h2>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      Client: {selectedProject.customerName} ({selectedProject.customerEmail})
-                      {selectedProject.contactPhone ? ` · ${selectedProject.contactPhone}` : ''}
-                    </p>
-                  </div>
-                  <span className="text-xs font-semibold text-white px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-700">
-                    {selectedProject.status}
-                  </span>
-                </div>
 
-                <div className="space-y-2 text-xs text-zinc-300">
-                  <p><strong className="text-white">Service:</strong> {selectedProject.serviceTitle}</p>
-                  <p><strong className="text-white">Description:</strong> {selectedProject.description}</p>
-                  {selectedProject.requirements && <p><strong className="text-white">Requirements:</strong> {selectedProject.requirements}</p>}
-                  {selectedProject.preferredStyle && <p><strong className="text-white">Preferred Style:</strong> {selectedProject.preferredStyle}</p>}
-                  {selectedProject.deliveryFormat && <p><strong className="text-white">Delivery Format:</strong> {selectedProject.deliveryFormat}</p>}
-                  {selectedProject.referenceLinks && selectedProject.referenceLinks.length > 0 && (
-                    <p>
-                      <strong className="text-white">Reference Links:</strong>{' '}
-                      {selectedProject.referenceLinks.join(', ')}
-                    </p>
-                  )}
-                </div>
-
-                {selectedProject.attachmentUrls && selectedProject.attachmentUrls.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-zinc-300">Customer Project Uploads</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {selectedProject.attachmentUrls.map((url, idx) => (
-                        <ProtectedMedia
-                          key={`${url}_${idx}`}
-                          url={url}
-                          alt={`Upload ${idx + 1}`}
-                          className="w-full h-24 object-cover rounded-lg border border-zinc-800"
-                        />
-                      ))}
-                    </div>
+              <div className="space-y-2 max-h-[680px] overflow-y-auto pr-1">
+                {filteredProjects.length === 0 ? (
+                  <div className="rounded-xl bg-[#101014] border border-zinc-800 p-6 text-center text-xs text-zinc-500">
+                    No project requests found.
                   </div>
+                ) : (
+                  filteredProjects.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedProjId(p.id);
+                        setSearchParams({ project: p.id });
+                      }}
+                      className={`w-full text-left rounded-xl p-4 border transition-colors cursor-pointer space-y-1.5 ${
+                        selectedProject?.id === p.id
+                          ? 'bg-[#15151b] border-[#D4AF37]'
+                          : 'bg-[#101014] border-zinc-800 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-xs gap-2">
+                        <span className="font-mono-tabular text-[#D4AF37] font-semibold">{p.projectCode}</span>
+                        <span className="text-zinc-200 font-medium">{p.status}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-white truncate">{p.title}</p>
+                      <p className="text-xs text-zinc-400 truncate">
+                        {p.customerName} · {p.serviceTitle}
+                      </p>
+                    </button>
+                  ))
                 )}
+              </div>
+            </div>
 
-                <form onSubmit={(e) => void handleUpdateProject(e)} className="rounded-xl bg-[#09090c] border border-zinc-800 p-4 space-y-4">
-                  <h3 className="text-xs font-semibold text-[#D4AF37]">Workflow Transition & Studio Notes</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="lg:col-span-7">
+              {!selectedProject ? (
+                <div className="rounded-2xl bg-[#101014] border border-zinc-800 p-10 text-center text-sm text-zinc-500">
+                  Select a project request to accept edits, track progress, update status details, and message the client.
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-[#101014] border border-zinc-800 p-6 space-y-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-zinc-800 pb-4">
                     <div>
-                      <label className="block text-[11px] text-zinc-400 mb-1">Next Status</label>
-                      <select
-                        value={nextStatus}
-                        onChange={(e) => setNextStatus(e.target.value as ProjectStatus)}
-                        className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
-                      >
-                        <option value={selectedProject.status}>{selectedProject.status} (Keep Current)</option>
-                        {(ALLOWED_ADMIN_TRANSITIONS[selectedProject.status] || []).map((st) => (
-                          <option key={st} value={st}>{st}</option>
+                      <p className="text-xs font-mono-tabular text-[#D4AF37]">{selectedProject.projectCode}</p>
+                      <h2 className="text-2xl font-display font-semibold text-white">{selectedProject.title}</h2>
+                      <p className="text-xs text-zinc-400 mt-1">
+                        Client: {selectedProject.customerName} ({selectedProject.customerEmail})
+                        {selectedProject.contactPhone ? ` · ${selectedProject.contactPhone}` : ''}
+                      </p>
+                    </div>
+                    <div className="text-right space-y-1">
+                      <span className="inline-block text-xs font-semibold text-white px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-700">
+                        {selectedProject.status}
+                      </span>
+                      {selectedProject.priceEstimate && (
+                        <p className="text-xs font-mono-tabular text-[#D4AF37]">{selectedProject.priceEstimate}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-xs text-zinc-300">
+                    <p><strong className="text-white">Service:</strong> {selectedProject.serviceTitle}</p>
+                    <p><strong className="text-white">Description:</strong> {selectedProject.description}</p>
+                    {selectedProject.requirements && <p><strong className="text-white">Requirements:</strong> {selectedProject.requirements}</p>}
+                    {selectedProject.preferredStyle && <p><strong className="text-white">Preferred Style:</strong> {selectedProject.preferredStyle}</p>}
+                    {selectedProject.deliveryFormat && <p><strong className="text-white">Delivery Format:</strong> {selectedProject.deliveryFormat}</p>}
+                    {selectedProject.notes && <p><strong className="text-white">Client Notes:</strong> {selectedProject.notes}</p>}
+                    {selectedProject.referenceLinks && selectedProject.referenceLinks.length > 0 && (
+                      <p>
+                        <strong className="text-white">Reference Links:</strong>{' '}
+                        {selectedProject.referenceLinks.join(', ')}
+                      </p>
+                    )}
+                  </div>
+
+                  {selectedProject.attachmentUrls && selectedProject.attachmentUrls.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-zinc-300">Customer Project Uploads</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {selectedProject.attachmentUrls.map((url, idx) => (
+                          <ProtectedMedia
+                            key={`${url}_${idx}`}
+                            url={url}
+                            alt={`Upload ${idx + 1}`}
+                            className="w-full h-24 object-cover rounded-lg border border-zinc-800"
+                          />
                         ))}
-                      </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Quick One-Click Workflow Controls */}
+                  {(ALLOWED_ADMIN_TRANSITIONS[selectedProject.status] || []).length > 0 && (
+                    <div className="rounded-xl bg-[#09090c] border border-zinc-800 p-4 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="text-xs font-semibold text-[#D4AF37]">Quick Edit Workflow Actions</h3>
+                        <span className="text-[11px] text-zinc-500">Notifies customer immediately</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(ALLOWED_ADMIN_TRANSITIONS[selectedProject.status] || []).map((target) => {
+                          const actionConfig: Record<
+                            ProjectStatus,
+                            { label: string; icon: React.ComponentType<{ className?: string }>; cls: string }
+                          > = {
+                            'Request Submitted': { label: 'Submitted', icon: Clock, cls: 'border-zinc-700 text-zinc-200 hover:border-zinc-500' },
+                            'Reviewing': { label: 'Mark Reviewing', icon: Eye, cls: 'border-zinc-700 text-zinc-200 hover:border-[#D4AF37]' },
+                            'Accepted': { label: 'Accept Edit', icon: Check, cls: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25' },
+                            'Editing in Progress': { label: 'Start / In Progress', icon: PlayCircle, cls: 'bg-[#D4AF37]/15 border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/25' },
+                            'Ready for Review': { label: 'Ready for Review', icon: Eye, cls: 'bg-sky-500/15 border-sky-500/40 text-sky-300 hover:bg-sky-500/25' },
+                            'Waiting for Customer Information': { label: 'Need Customer Info', icon: HelpCircle, cls: 'border-amber-500/40 text-amber-300 hover:bg-amber-500/10' },
+                            'Revision Requested': { label: 'Revision Requested', icon: Clock, cls: 'border-zinc-700 text-zinc-200' },
+                            'Completed': { label: 'Mark Completed', icon: CheckCircle2, cls: 'bg-emerald-600 border-emerald-500 text-white hover:bg-emerald-500' },
+                            'Rejected': { label: 'Reject Request', icon: XCircle, cls: 'border-red-900/60 text-red-300 hover:bg-red-950/40' },
+                            'Cancelled': { label: 'Cancel', icon: XCircle, cls: 'border-zinc-700 text-zinc-400' },
+                          };
+                          const cfg = actionConfig[target];
+                          const Icon = cfg.icon;
+                          return (
+                            <button
+                              key={target}
+                              type="button"
+                              disabled={updatingStatus}
+                              onClick={() => void applyProjectTransition(target)}
+                              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 disabled:opacity-50 ${cfg.cls}`}
+                            >
+                              <Icon className="w-3.5 h-3.5" />
+                              {cfg.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <form onSubmit={(e) => void handleUpdateProject(e)} className="rounded-xl bg-[#09090c] border border-zinc-800 p-4 space-y-4">
+                    <h3 className="text-xs font-semibold text-white">Detailed Status Update, Pricing & Studio Note</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] text-zinc-400 mb-1">Target Status</label>
+                        <select
+                          value={nextStatus}
+                          onChange={(e) => setNextStatus(e.target.value as ProjectStatus)}
+                          className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
+                        >
+                          <option value={selectedProject.status}>{selectedProject.status} (Keep Current)</option>
+                          {(ALLOWED_ADMIN_TRANSITIONS[selectedProject.status] || []).map((st) => (
+                            <option key={st} value={st}>{st}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-zinc-400 mb-1">Price Estimate</label>
+                        <input
+                          type="text"
+                          value={priceEstimateInput}
+                          onChange={(e) => setPriceEstimateInput(e.target.value)}
+                          placeholder="e.g., ₹250 confirmed"
+                          className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
+                        />
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-[11px] text-zinc-400 mb-1">Price Estimate</label>
+                      <label className="block text-[11px] text-zinc-400 mb-1">
+                        Customer Editing Status Detail (Displayed on Customer Dashboard)
+                      </label>
                       <input
                         type="text"
-                        value={priceEstimateInput}
-                        onChange={(e) => setPriceEstimateInput(e.target.value)}
-                        placeholder="e.g., ₹250 confirmed"
+                        value={statusNote}
+                        onChange={(e) => setStatusNote(e.target.value)}
+                        placeholder={DEFAULT_ADMIN_STATUS_NOTES[nextStatus]}
                         className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
                       />
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-zinc-400 mb-1">Customer Update Message</label>
-                    <input
-                      type="text"
-                      value={statusNote}
-                      onChange={(e) => setStatusNote(e.target.value)}
-                      placeholder="Visible to customer in their project timeline..."
-                      className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-zinc-400 mb-1">Admin Internal Notes (Private)</label>
-                    <textarea
-                      rows={2}
-                      value={internalNotesInput}
-                      onChange={(e) => setInternalNotesInput(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-lg bg-[#D4AF37] text-black text-xs font-semibold hover:bg-[#e5c24f] cursor-pointer"
-                  >
-                    Save Project Update
-                  </button>
-                </form>
-
-                {/* Project Messages */}
-                <div className="space-y-2 border-t border-zinc-800 pt-4">
-                  <p className="text-xs font-semibold text-zinc-300">Client Communication Thread</p>
-                  <div className="max-h-40 overflow-y-auto space-y-2">
-                    {projMessages.map((m) => (
-                      <div key={m.id} className="rounded-lg bg-[#09090c] border border-zinc-800 p-2.5 text-xs">
-                        <span className="font-semibold text-[#D4AF37]">{m.senderName}: </span>
-                        <span className="text-zinc-200">{m.body}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <form onSubmit={(e) => void handleAdminMessage(e)} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={adminMsgInput}
-                      onChange={(e) => setAdminMsgInput(e.target.value)}
-                      placeholder="Reply to customer..."
-                      className="flex-1 px-3 py-2 rounded-lg bg-[#09090c] border border-zinc-800 text-xs text-white"
-                    />
+                    <div>
+                      <label className="block text-[11px] text-zinc-400 mb-1">Admin Internal Notes (Private)</label>
+                      <textarea
+                        rows={2}
+                        value={internalNotesInput}
+                        onChange={(e) => setInternalNotesInput(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg bg-[#101014] border border-zinc-800 text-xs text-white"
+                      />
+                    </div>
                     <button
                       type="submit"
-                      className="px-3 py-2 rounded-lg bg-zinc-800 text-white text-xs font-medium inline-flex items-center gap-1 cursor-pointer"
+                      disabled={updatingStatus}
+                      className="px-4 py-2 rounded-lg bg-[#D4AF37] text-black text-xs font-semibold hover:bg-[#e5c24f] cursor-pointer disabled:opacity-50"
                     >
-                      <Send className="w-3.5 h-3.5" />
-                      Send
+                      {updatingStatus ? 'Saving Update...' : 'Save Custom Status Update'}
                     </button>
                   </form>
+
+                  {/* Status History sent to Customer */}
+                  <div className="space-y-2 border-t border-zinc-800 pt-4">
+                    <p className="text-xs font-semibold text-zinc-300">Status History (Visible to Customer)</p>
+                    {projHistory.length === 0 ? (
+                      <p className="text-xs text-zinc-500">No history logged yet.</p>
+                    ) : (
+                      <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
+                        {projHistory.map((h) => (
+                          <div key={h.id} className="rounded-lg bg-[#09090c] border border-zinc-800 p-2.5 flex items-start justify-between gap-3 text-xs">
+                            <div className="space-y-0.5">
+                              <p className="font-medium text-white">
+                                {h.fromStatus ? `${h.fromStatus} → ${h.toStatus}` : h.toStatus}
+                                <span className="text-zinc-500 font-normal"> · {h.actorRole === 'admin' ? 'Studio Admin' : 'Customer'}</span>
+                              </p>
+                              {h.note && <p className="text-zinc-400">{h.note}</p>}
+                            </div>
+                            <span className="text-[11px] text-zinc-500 whitespace-nowrap tabular-nums">
+                              {formatStudioDateTime(h.createdAt)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Project Messages */}
+                  <div className="space-y-2 border-t border-zinc-800 pt-4">
+                    <p className="text-xs font-semibold text-zinc-300">Client Communication Thread</p>
+                    <div className="max-h-40 overflow-y-auto space-y-2">
+                      {projMessages.map((m) => (
+                        <div key={m.id} className="rounded-lg bg-[#09090c] border border-zinc-800 p-2.5 text-xs">
+                          <span className="font-semibold text-[#D4AF37]">{m.senderName}: </span>
+                          <span className="text-zinc-200">{m.body}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <form onSubmit={(e) => void handleAdminMessage(e)} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={adminMsgInput}
+                        onChange={(e) => setAdminMsgInput(e.target.value)}
+                        placeholder="Reply to customer..."
+                        className="flex-1 px-3 py-2 rounded-lg bg-[#09090c] border border-zinc-800 text-xs text-white"
+                      />
+                      <button
+                        type="submit"
+                        className="px-3 py-2 rounded-lg bg-zinc-800 text-white text-xs font-medium inline-flex items-center gap-1 cursor-pointer"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        Send
+                      </button>
+                    </form>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

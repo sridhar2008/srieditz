@@ -46,16 +46,72 @@ export const PRICING_FILTERS = [
 ] as const;
 
 export const ALLOWED_ADMIN_TRANSITIONS: Record<ProjectStatus, ProjectStatus[]> = {
-  'Request Submitted': ['Reviewing', 'Accepted', 'Waiting for Customer Information', 'Rejected'],
-  'Reviewing': ['Accepted', 'Waiting for Customer Information', 'Rejected'],
-  'Accepted': ['Editing in Progress', 'Waiting for Customer Information', 'Rejected'],
-  'Editing in Progress': ['Ready for Review', 'Waiting for Customer Information'],
-  'Waiting for Customer Information': ['Reviewing', 'Accepted', 'Editing in Progress', 'Rejected'],
-  'Ready for Review': ['Completed', 'Editing in Progress'],
-  'Revision Requested': ['Editing in Progress', 'Ready for Review', 'Waiting for Customer Information'],
+  'Request Submitted': ['Reviewing', 'Accepted', 'Editing in Progress', 'Waiting for Customer Information', 'Rejected'],
+  'Reviewing': ['Accepted', 'Editing in Progress', 'Waiting for Customer Information', 'Rejected'],
+  'Accepted': ['Editing in Progress', 'Ready for Review', 'Waiting for Customer Information', 'Completed', 'Rejected'],
+  'Editing in Progress': ['Ready for Review', 'Waiting for Customer Information', 'Completed'],
+  'Waiting for Customer Information': ['Reviewing', 'Accepted', 'Editing in Progress', 'Ready for Review', 'Rejected'],
+  'Ready for Review': ['Completed', 'Editing in Progress', 'Waiting for Customer Information'],
+  'Revision Requested': ['Editing in Progress', 'Ready for Review', 'Waiting for Customer Information', 'Completed'],
   'Completed': [],
   'Rejected': [],
   'Cancelled': [],
+};
+
+export const STATUS_CUSTOMER_DETAILS: Record<ProjectStatus, { headline: string; description: string }> = {
+  'Request Submitted': {
+    headline: 'Request Submitted',
+    description: 'Your project brief and uploaded files are in the studio queue waiting for initial review.',
+  },
+  'Reviewing': {
+    headline: 'Under Studio Review',
+    description: 'Our editor is reviewing your footage, creative brief, and target turnaround timeline.',
+  },
+  'Accepted': {
+    headline: 'Edit Accepted',
+    description: 'Your edit request has been accepted by Sri Editing Studio and scheduled for production.',
+  },
+  'Editing in Progress': {
+    headline: 'Editing in Progress',
+    description: 'Active post-production is underway — cutting, color grading, pacing, and audio polish.',
+  },
+  'Waiting for Customer Information': {
+    headline: 'Waiting for Your Details',
+    description: 'The editor needs additional footage, files, or clarifications before continuing.',
+  },
+  'Ready for Review': {
+    headline: 'Ready for Review',
+    description: 'Your draft edit is ready to preview. Inspect the result or request refinements below.',
+  },
+  'Revision Requested': {
+    headline: 'Revision Requested',
+    description: 'Your revision notes have been received and queued for the next studio pass.',
+  },
+  'Completed': {
+    headline: 'Edit Completed',
+    description: 'All editing and final delivery steps are finished. Thank you for creating with us.',
+  },
+  'Rejected': {
+    headline: 'Request Declined',
+    description: 'This project request could not be accommodated. Check the studio update note for details.',
+  },
+  'Cancelled': {
+    headline: 'Request Cancelled',
+    description: 'This project request was cancelled and closed.',
+  },
+};
+
+export const DEFAULT_ADMIN_STATUS_NOTES: Record<ProjectStatus, string> = {
+  'Request Submitted': 'Project submitted to Sri Editing Studio queue.',
+  'Reviewing': 'Reviewing your uploaded files, references, and creative brief.',
+  'Accepted': 'Your edit request has been accepted and scheduled into our editing workflow.',
+  'Editing in Progress': 'Editing has started — working on cuts, color grading, and visual polish.',
+  'Ready for Review': 'Your edit draft is ready for review. Please share feedback or revision notes.',
+  'Waiting for Customer Information': 'Please share additional files or clarifications so we can continue editing.',
+  'Revision Requested': 'Revision pass logged and assigned to the editor.',
+  'Completed': 'Your final edit is completed and delivered. Thank you for choosing Sri Editing Studio!',
+  'Rejected': 'We are unable to proceed with this request right now. Please message us for alternatives.',
+  'Cancelled': 'Project marked as cancelled.',
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {

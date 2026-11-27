@@ -1,11 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
+  AlertTriangle,
+  Check,
   CheckCircle2,
   Clock,
+  Eye,
   FolderKanban,
   LogOut,
   MessageSquare,
+  PlayCircle,
   Plus,
   RotateCcw,
   Send,
@@ -14,11 +18,13 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { STATUS_CUSTOMER_DETAILS } from '../../data/defaultCatalog';
 import {
   customerAddProjectInfo,
   customerCancelProject,
   customerRequestRevision,
   formatStudioDate,
+  formatStudioDateTime,
   getUserPrivateInfo,
   sendProjectMessage,
   subscribeCustomerProjects,
@@ -34,7 +40,25 @@ import {
   EditingProject,
   ProjectHistoryEntry,
   ProjectMessage,
+  ProjectStatus,
 } from '../../types/studio';
+
+const WORKFLOW_STAGES: ProjectStatus[] = [
+  'Request Submitted',
+  'Reviewing',
+  'Accepted',
+  'Editing in Progress',
+  'Ready for Review',
+  'Completed',
+];
+
+function getWorkflowStageIndex(status: ProjectStatus): number {
+  const direct = WORKFLOW_STAGES.indexOf(status);
+  if (direct >= 0) return direct;
+  if (status === 'Waiting for Customer Information') return 1;
+  if (status === 'Revision Requested') return 3;
+  return -1;
+}
 
 export const CustomerDashboardPage: React.FC = () => {
   const { user, profile, logout } = useAuth();
@@ -416,9 +440,12 @@ export const CustomerDashboardPage: React.FC = () => {
                       <span className="font-mono-tabular text-[#D4AF37] font-semibold">
                         {proj.projectCode}
                       </span>
-                      <span className="text-zinc-400">{proj.status}</span>
+                      <span className="text-zinc-200 font-medium">{proj.status}</span>
                     </div>
                     <h3 className="text-sm font-semibold text-white truncate">{proj.title}</h3>
+                    {proj.latestUpdate && (
+                      <p className="text-xs text-zinc-400 line-clamp-1">{proj.latestUpdate}</p>
+                    )}
                     <div className="flex items-center justify-between text-xs text-zinc-500">
                       <span>{proj.serviceTitle}</span>
                       <span className="tabular-nums">{formatStudioDate(proj.updatedAt)}</span>
@@ -433,7 +460,7 @@ export const CustomerDashboardPage: React.FC = () => {
           <div className="lg:col-span-7">
             {!selectedProject ? (
               <div className="rounded-2xl bg-[#101014] border border-zinc-800 p-10 text-center text-sm text-zinc-400">
-                Select a project from the list to inspect its timeline, files, and studio updates.
+                Select a project from the list to inspect its editing progress, studio status details, and files.
               </div>
             ) : (
               <div className="rounded-2xl bg-[#101014] border border-zinc-800 p-6 space-y-6">
@@ -443,40 +470,137 @@ export const CustomerDashboardPage: React.FC = () => {
                       <span className="font-mono-tabular text-[#D4AF37] font-semibold">
                         {selectedProject.projectCode}
                       </span>
-                      <span>·</span>
+                      <span aria-hidden="true">·</span>
                       <span>{selectedProject.serviceTitle}</span>
                     </div>
                     <h2 className="mt-1 text-2xl font-display font-semibold text-white">
                       {selectedProject.title}
                     </h2>
                   </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-xs font-semibold text-white block">
+                  <div className="text-left sm:text-right shrink-0 space-y-1">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-3 py-1 rounded-lg bg-[#16161d] border border-zinc-700">
+                      {selectedProject.status === 'Completed' ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : selectedProject.status === 'Editing in Progress' ? (
+                        <PlayCircle className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      ) : selectedProject.status === 'Ready for Review' ? (
+                        <Eye className="w-3.5 h-3.5 text-sky-400" />
+                      ) : selectedProject.status === 'Rejected' || selectedProject.status === 'Cancelled' ? (
+                        <XCircle className="w-3.5 h-3.5 text-red-400" />
+                      ) : (
+                        <Clock className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      )}
                       {selectedProject.status}
                     </span>
                     {selectedProject.priceEstimate && (
-                      <span className="text-xs font-mono-tabular text-[#D4AF37]">
-                        {selectedProject.priceEstimate}
+                      <span className="block text-xs font-mono-tabular text-[#D4AF37]">
+                        Estimate: {selectedProject.priceEstimate}
                       </span>
                     )}
                   </div>
                 </div>
 
+                {/* Live Editing Status Details & Workflow Stepper */}
+                {(() => {
+                  const detail = STATUS_CUSTOMER_DETAILS[selectedProject.status];
+                  const stageIdx = getWorkflowStageIndex(selectedProject.status);
+                  const isTerminalNegative =
+                    selectedProject.status === 'Rejected' || selectedProject.status === 'Cancelled';
+                  return (
+                    <div className="rounded-xl bg-[#09090c] border border-zinc-800 p-4 space-y-4">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div className="space-y-1">
+                          <p className="text-xs font-semibold text-[#D4AF37]">
+                            Editing Status Detail · {detail.headline}
+                          </p>
+                          <p className="text-xs text-zinc-300 leading-relaxed">{detail.description}</p>
+                        </div>
+                        <span className="text-[11px] text-zinc-500 whitespace-nowrap tabular-nums">
+                          Updated {formatStudioDateTime(selectedProject.updatedAt)}
+                        </span>
+                      </div>
+
+                      {!isTerminalNegative ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 pt-1">
+                          {WORKFLOW_STAGES.map((stage, idx) => {
+                            const reached = stageIdx >= idx;
+                            const isCurrent = stageIdx === idx;
+                            return (
+                              <div
+                                key={stage}
+                                className={`rounded-lg border p-2.5 space-y-1 transition-colors ${
+                                  isCurrent
+                                    ? 'bg-[#D4AF37]/12 border-[#D4AF37]/60'
+                                    : reached
+                                      ? 'bg-emerald-950/25 border-emerald-800/50'
+                                      : 'bg-[#101014] border-zinc-800/80 opacity-65'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between text-[11px]">
+                                  <span className="font-mono-tabular text-zinc-400">0{idx + 1}</span>
+                                  {reached && (
+                                    <Check
+                                      className={`w-3.5 h-3.5 ${
+                                        isCurrent ? 'text-[#D4AF37]' : 'text-emerald-400'
+                                      }`}
+                                    />
+                                  )}
+                                </div>
+                                <p
+                                  className={`text-[11px] font-medium leading-tight ${
+                                    isCurrent
+                                      ? 'text-[#D4AF37]'
+                                      : reached
+                                        ? 'text-emerald-200'
+                                        : 'text-zinc-400'
+                                  }`}
+                                >
+                                  {stage === 'Editing in Progress'
+                                    ? 'In Progress'
+                                    : stage === 'Request Submitted'
+                                      ? 'Submitted'
+                                      : stage}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="rounded-lg bg-red-950/25 border border-red-900/50 p-3 flex items-center gap-2 text-xs text-red-200">
+                          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                          <span>Status: {selectedProject.status}</span>
+                        </div>
+                      )}
+
+                      {selectedProject.latestUpdate && (
+                        <div className="rounded-lg bg-[#14141a] border border-zinc-800 p-3 text-xs text-zinc-200 space-y-0.5">
+                          <p className="text-[11px] font-semibold text-[#D4AF37]">Latest Note from Studio Admin</p>
+                          <p className="leading-relaxed">{selectedProject.latestUpdate}</p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-400 pt-1 border-t border-zinc-800/80">
+                        {selectedProject.preferredStyle && (
+                          <span>Style: <strong className="text-zinc-200 font-medium">{selectedProject.preferredStyle}</strong></span>
+                        )}
+                        {selectedProject.deliveryFormat && (
+                          <span>Delivery: <strong className="text-zinc-200 font-medium">{selectedProject.deliveryFormat}</strong></span>
+                        )}
+                        <span className="tabular-nums">Revisions: <strong className="text-zinc-200 font-medium">{selectedProject.revisionCount}</strong></span>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {actionError && <p className="text-xs text-red-400">{actionError}</p>}
                 {actionSuccess && <p className="text-xs text-emerald-400">{actionSuccess}</p>}
 
-                <div className="space-y-3 text-sm">
+                <div className="space-y-2 text-sm">
                   <p className="text-zinc-300 leading-relaxed">{selectedProject.description}</p>
                   {selectedProject.requirements && (
                     <p className="text-xs text-zinc-400">
                       <span className="text-zinc-300 font-medium">Requirements:</span> {selectedProject.requirements}
                     </p>
-                  )}
-                  {selectedProject.latestUpdate && (
-                    <div className="rounded-lg bg-[#16161d] border border-zinc-800 p-3 text-xs text-zinc-300">
-                      <span className="text-[#D4AF37] font-medium">Latest Studio Update: </span>
-                      {selectedProject.latestUpdate}
-                    </div>
                   )}
                 </div>
 
@@ -575,20 +699,34 @@ export const CustomerDashboardPage: React.FC = () => {
 
                 {/* Status Timeline */}
                 <div className="space-y-3 border-t border-zinc-800 pt-4">
-                  <h3 className="text-xs font-semibold text-zinc-300">Status History</h3>
-                  <div className="space-y-2">
-                    {history.map((h) => (
-                      <div key={h.id} className="flex items-start justify-between gap-4 text-xs">
-                        <div>
-                          <span className="font-medium text-white">{h.toStatus}</span>
-                          {h.note && <p className="text-zinc-400">{h.note}</p>}
+                  <h3 className="text-xs font-semibold text-zinc-300">Editing Status History</h3>
+                  {history.length === 0 ? (
+                    <p className="text-xs text-zinc-500">Status updates will appear here as your project progresses.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {history.map((h) => (
+                        <div
+                          key={h.id}
+                          className="rounded-lg bg-[#09090c] border border-zinc-800 p-3 flex items-start justify-between gap-4 text-xs"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-semibold text-white">
+                                {h.fromStatus ? `${h.fromStatus} → ${h.toStatus}` : h.toStatus}
+                              </span>
+                              <span className="text-[11px] text-[#D4AF37]">
+                                · {h.actorRole === 'admin' ? 'Studio Admin' : 'You'}
+                              </span>
+                            </div>
+                            {h.note && <p className="text-zinc-300 leading-relaxed">{h.note}</p>}
+                          </div>
+                          <span className="text-[11px] text-zinc-500 whitespace-nowrap tabular-nums">
+                            {formatStudioDateTime(h.createdAt)}
+                          </span>
                         </div>
-                        <span className="text-zinc-500 whitespace-nowrap tabular-nums">
-                          {formatStudioDate(h.createdAt)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Project Communication Thread */}

@@ -83,7 +83,7 @@ function StudioRoutes() {
         <Route
           path="/request-edit"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute disallowAdmin>
               <RequestEditPage services={services} />
             </ProtectedRoute>
           }
@@ -91,7 +91,7 @@ function StudioRoutes() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute disallowAdmin>
               <CustomerDashboardPage />
             </ProtectedRoute>
           }
