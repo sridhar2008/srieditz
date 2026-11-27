@@ -61,6 +61,16 @@ When placing the studio behind a custom domain:
 
 ---
 
+## GitHub Pages Deployment
+
+A ready-to-run workflow is included at `.github/workflows/deploy-pages.yml`:
+
+1. In your GitHub repository, open **Settings → Pages** and set **Source** to **GitHub Actions** (do not serve the unbuilt root `index.html` directly from a branch, because Chrome cannot run uncompiled `.tsx` modules).
+2. Push to `main` (or trigger **Deploy to GitHub Pages** in the Actions tab) to build `dist/` with the repository's base path and publish it.
+3. Add `<your-username>.github.io` under **Firebase Console → Authentication → Settings → Authorized domains** if you want Google Sign-In active on your GitHub Pages URL. (Note: backend `/api/v1/*` upload endpoints require running `npm run start` on a Node.js host such as Cloud Run.)
+
+---
+
 ## Scripts
 
 ```bash

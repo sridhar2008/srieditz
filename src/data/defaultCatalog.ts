@@ -1,13 +1,20 @@
 import { EditingService, PortfolioItem, ProjectStatus, PromoBanner, SiteSettings } from '../types/studio';
 
-export const STUDIO_LOGO_PATH = '/assets/aistudio/ChatGPT_Image_Nov_16__2026__07_05_06_PM_969ac390.png';
+function resolveAssetUrl(assetPath: string): string {
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanAsset = assetPath.replace(/^\/+/, '');
+  if (base === './' || base === '.') return `./${cleanAsset}`;
+  return `${base.endsWith('/') ? base : `${base}/`}${cleanAsset}`;
+}
+
+export const STUDIO_LOGO_PATH = resolveAssetUrl('assets/aistudio/ChatGPT_Image_Nov_16__2026__07_05_06_PM_969ac390.png');
 
 export const GENERATED_MEDIA = {
-  heroStudio: '/src/assets/images/hero_studio_showcase_1795761351630.jpg',
-  weddingCinema: '/src/assets/images/portfolio_wedding_cinema_1795761351973.jpg',
-  portraitRetouch: '/src/assets/images/portfolio_portrait_retouch_1795761351438.jpg',
-  festivalPoster: '/src/assets/images/portfolio_festival_poster_1795761354486.jpg',
-  travelVlog: '/src/assets/images/portfolio_travel_vlog_1795761353775.jpg',
+  heroStudio: resolveAssetUrl('src/assets/images/hero_studio_showcase_1795761351630.jpg'),
+  weddingCinema: resolveAssetUrl('src/assets/images/portfolio_wedding_cinema_1795761351973.jpg'),
+  portraitRetouch: resolveAssetUrl('src/assets/images/portfolio_portrait_retouch_1795761351438.jpg'),
+  festivalPoster: resolveAssetUrl('src/assets/images/portfolio_festival_poster_1795761354486.jpg'),
+  travelVlog: resolveAssetUrl('src/assets/images/portfolio_travel_vlog_1795761353775.jpg'),
 };
 
 export const PORTFOLIO_CATEGORIES = [

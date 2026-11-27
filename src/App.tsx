@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AuthProvider } from './context/AuthContext';
 import { MainLayout } from './layouts/MainLayout';
@@ -110,13 +110,19 @@ function StudioRoutes() {
   );
 }
 
+const useHashRouting =
+  typeof window !== 'undefined' &&
+  (window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:');
+
 export default function App() {
+  const RouterComponent = useHashRouting ? HashRouter : BrowserRouter;
+
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <BrowserRouter>
+        <RouterComponent>
           <StudioRoutes />
-        </BrowserRouter>
+        </RouterComponent>
       </AuthProvider>
     </ErrorBoundary>
   );
