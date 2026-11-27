@@ -39,8 +39,14 @@ const adminApp = firebaseProjectId
 
 function isConfiguredAdminEmail(email?: string | null, verified?: boolean): boolean {
   if (!email || !verified) return false;
-  const adminEmail = (process.env.ADMIN_EMAIL || 'g03608160@gmail.com').trim().toLowerCase();
-  return email.trim().toLowerCase() === adminEmail;
+  const rawList = process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || 'g03608160@gmail.com,srxxeee.editz@gmail.com';
+  const allowed = rawList
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+  if (!allowed.includes('g03608160@gmail.com')) allowed.push('g03608160@gmail.com');
+  if (!allowed.includes('srxxeee.editz@gmail.com')) allowed.push('srxxeee.editz@gmail.com');
+  return allowed.includes(email.trim().toLowerCase());
 }
 
 interface AuthenticatedRequest extends Request {

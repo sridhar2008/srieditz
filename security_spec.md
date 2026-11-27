@@ -1,7 +1,7 @@
 # SRI EDITING STUDIO — Payload-First Security Specification
 
 ## 1. Core Data Invariants
-1. **Identity & Single Admin Gate**: Admin privileges are restricted strictly to verified identity (`request.auth.token.email == 'g03608160@gmail.com' && request.auth.token.email_verified == true`) or an admin registry entry. Clients can never elevate `role: 'admin'` on `/users/{userId}` or write to `/admins/{userId}`.
+1. **Identity & Admin Gate**: Admin privileges are restricted strictly to verified identity (`(request.auth.token.email == 'g03608160@gmail.com' || request.auth.token.email == 'srxxeee.editz@gmail.com') && request.auth.token.email_verified == true`) or an admin registry entry. Clients can never elevate `role: 'admin'` on `/users/{userId}` or write to `/admins/{userId}`.
 2. **PII Isolation**: Email, phone, and private notes reside in `/users/{userId}/private/{docId}` (readable/writable only by `isOwner(userId)` or `isAdmin()`).
 3. **Project Ownership & Workflow Integrity**: Every `/projects/{projectId}` document belongs to `customerId == request.auth.uid` on creation, starts in `'Request Submitted'`, and enforces strict `affectedKeys().hasOnly(...)` transitions. Customers cannot self-approve, mark completed, or read another customer's projects.
 4. **Master Gate on Subcollections**: `/projects/{projectId}/history` and `/projects/{projectId}/messages` verify parent ownership via `get(/databases/$(database)/documents/projects/$(projectId))`.

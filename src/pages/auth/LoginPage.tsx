@@ -5,7 +5,7 @@ import { StudioLogo } from '../../components/common/StudioLogo';
 import { useAuth } from '../../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
-  const { user, isAdmin, loginWithGoogle, loginWithEmail } = useAuth();
+  const { user, isAdmin, isAuthReady, loginWithGoogle, loginWithEmail } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
@@ -17,11 +17,11 @@ export const LoginPage: React.FC = () => {
   const from = (location.state as { from?: string } | null)?.from;
 
   useEffect(() => {
-    if (user) {
+    if (user && isAuthReady) {
       if (from) navigate(from, { replace: true });
       else navigate(isAdmin ? '/admin' : '/dashboard', { replace: true });
     }
-  }, [user, isAdmin, from, navigate]);
+  }, [user, isAdmin, isAuthReady, from, navigate]);
 
   const mapAuthError = (err: unknown): string => {
     const msg = err instanceof Error ? err.message : String(err);

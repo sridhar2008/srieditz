@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   BarChart3,
   Check,
@@ -295,21 +296,27 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-5">
         <div>
-          <p className="text-xs font-medium text-[#D4AF37]">Authorized Studio Administration</p>
+          <p className="text-xs font-medium text-[#D4AF37]">
+            Authorized Studio Administration{user?.email ? ` · ${user.email}` : ''}
+          </p>
           <h1 className="text-3xl font-display font-semibold text-white">
             SRI EDITING STUDIO Console
           </h1>
         </div>
         <div className="flex items-center gap-3">
           {feedbackMsg && (
-            <span className="text-xs text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-3 py-1.5 rounded-lg">
+            <motion.span
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-xs text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-3 py-1.5 rounded-lg"
+            >
               {feedbackMsg}
-            </span>
+            </motion.span>
           )}
           <button
             type="button"
             onClick={() => void logout()}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-700 text-xs font-medium text-zinc-200 hover:border-[#D4AF37] cursor-pointer whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-700 text-xs font-medium text-zinc-200 hover:border-[#D4AF37] cursor-pointer whitespace-nowrap shrink-0 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
             Admin Logout
@@ -319,23 +326,39 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
 
       {/* Section Selector */}
       <div className="flex flex-wrap items-center gap-1.5 border-b border-zinc-800/80 pb-3">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setSection(item.id)}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
-              section === item.id
-                ? 'bg-[#D4AF37] text-black font-semibold'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-            }`}
-          >
-            <item.icon className="w-3.5 h-3.5" />
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {navItems.map((item) => {
+          const isActive = section === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setSection(item.id)}
+              className={`relative inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                isActive ? 'text-black font-semibold' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              }`}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="adminTabActiveBg"
+                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 rounded-lg bg-[#D4AF37]"
+                />
+              )}
+              <item.icon className="relative z-10 w-3.5 h-3.5" />
+              <span className="relative z-10">{item.label}</span>
+            </button>
+          );
+        })}
       </div>
 
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={section}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+        >
       {/* 1. ANALYTICS OVERVIEW */}
       {section === 'overview' && (
         <AdminAnalyticsView
@@ -1196,6 +1219,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ settings
           </button>
         </form>
       )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

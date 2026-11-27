@@ -77,6 +77,8 @@ async function syncUserFirestoreProfile(firebaseUser: User): Promise<UserProfile
   }
 }
 
+const ADMIN_EMAILS = ['g03608160@gmail.com', 'srxxeee.editz@gmail.com'];
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -92,14 +94,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    const emailNormalized = firebaseUser.email?.trim().toLowerCase() || '';
+    const isVerifiedAdminEmail =
+      Boolean(firebaseUser.emailVerified) && ADMIN_EMAILS.includes(emailNormalized);
+
     try {
       const identity = await fetchAuthIdentity();
-      setIsAdmin(identity.isAdmin);
-      if (identity.isAdmin) {
+      const adminFlag = Boolean(identity.isAdmin || isVerifiedAdminEmail);
+      setIsAdmin(adminFlag);
+      if (adminFlag) {
         await ensureStudioSeededByAdmin();
       }
     } catch {
-      setIsAdmin(false);
+      setIsAdmin(isVerifiedAdminEmail);
+      if (isVerifiedAdminEmail) {
+        await ensureStudioSeededByAdmin();
+      }
     }
 
     const synced = await syncUserFirestoreProfile(firebaseUser);

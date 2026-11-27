@@ -5,7 +5,7 @@ import { StudioLogo } from '../../components/common/StudioLogo';
 import { useAuth } from '../../context/AuthContext';
 
 export const SignupPage: React.FC = () => {
-  const { user, loginWithGoogle, registerWithEmail } = useAuth();
+  const { user, isAdmin, isAuthReady, loginWithGoogle, registerWithEmail } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,10 +15,10 @@ export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && user.emailVerified) {
-      navigate('/dashboard', { replace: true });
+    if (user && user.emailVerified && isAuthReady) {
+      navigate(isAdmin ? '/admin' : '/dashboard', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, isAdmin, isAuthReady, navigate]);
 
   const handleGoogle = async () => {
     setError('');
